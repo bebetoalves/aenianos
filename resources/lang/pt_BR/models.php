@@ -15,6 +15,11 @@ return [
         'image' => 'Imagem',
         'draft' => 'Rascunho',
     ],
+    'server' => [
+        'name' => 'Nome',
+        'icon' => 'Ícone',
+        'links' => 'Links',
+    ],
     'common' => [
         'created_at' => 'Data de Criação',
         'updated_at' => 'Última Atualização',

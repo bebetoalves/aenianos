@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'title',
@@ -20,4 +21,9 @@ class Project extends Model
         'miniature',
         'cover',
     ];
+
+    protected function defineSluggableField(): string
+    {
+        return 'title';
+    }
 }

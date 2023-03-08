@@ -9,6 +9,12 @@ return [
         'question' => 'Pergunta',
         'answer' => 'Resposta',
     ],
+    'post' => [
+        'title' => 'Título',
+        'content' => 'Conteúdo',
+        'image' => 'Imagem',
+        'draft' => 'Rascunho',
+    ],
     'common' => [
         'created_at' => 'Data de Criação',
         'updated_at' => 'Última Atualização',

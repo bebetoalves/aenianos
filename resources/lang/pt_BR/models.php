@@ -28,6 +28,13 @@ return [
         'role' => 'Cargo',
         'posts' => 'Postagens',
     ],
+    'link' => [
+        'name' => 'Nome',
+        'url' => 'Url',
+        'quality' => 'Qualidade',
+        'project' => 'Projeto',
+        'server' => 'Servidor',
+    ],
     'common' => [
         'created_at' => 'Data de Criação',
         'updated_at' => 'Última Atualização',

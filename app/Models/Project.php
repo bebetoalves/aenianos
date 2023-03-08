@@ -47,6 +47,11 @@ class Project extends Model
         return $this->hasMany(Link::class);
     }
 
+    public function progression(): HasOne
+    {
+        return $this->hasOne(Progression::class);
+    }
+
     protected function defineSluggableField(): string
     {
         return 'title';

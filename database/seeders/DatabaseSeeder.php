@@ -6,6 +6,7 @@ use App\Models\Faq;
 use App\Models\Genre;
 use App\Models\Link;
 use App\Models\Post;
+use App\Models\Progression;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\User;
@@ -35,5 +36,7 @@ class DatabaseSeeder extends Seeder
         Server::factory(10)->create();
 
         Link::factory(50)->create();
+
+        Progression::factory(5)->create();
     }
 }

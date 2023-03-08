@@ -109,7 +109,8 @@ class GenreTest extends TestCase
     public static function provideValidation(): array
     {
         return [
-            'max len name' => [fn () => Str::random(31), 'max'],
+            'required name' => [fn () => '', 'required'],
+            'max length name' => [fn () => Str::random(31), 'max'],
             'unique name' => [fn () => Genre::factory()->createOne()->name, 'unique'],
         ];
     }

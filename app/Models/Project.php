@@ -6,6 +6,7 @@ use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Project extends Model
 {
@@ -26,6 +27,11 @@ class Project extends Model
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class);
+    }
+
+    public function highlight(): HasOne
+    {
+        return $this->hasOne(Highlight::class);
     }
 
     protected function defineSluggableField(): string

@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use BenSampo\Enum\Contracts\LocalizedEnum;
 use BenSampo\Enum\Enum;
 
-class Category extends Enum
+class Category extends Enum implements LocalizedEnum
 {
     const SERIES = 'series';
 

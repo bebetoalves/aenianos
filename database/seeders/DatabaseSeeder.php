@@ -6,6 +6,7 @@ use App\Models\Faq;
 use App\Models\Genre;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Server;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -29,5 +30,7 @@ class DatabaseSeeder extends Seeder
 
             $project->genres()->attach($genres);
         });
+
+        Server::factory(10)->create();
     }
 }

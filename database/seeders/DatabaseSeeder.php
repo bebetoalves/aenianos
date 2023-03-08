@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Faq;
 use App\Models\Genre;
+use App\Models\Link;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Server;
@@ -25,12 +26,14 @@ class DatabaseSeeder extends Seeder
 
         Genre::factory(10)->create();
 
-        Project::factory(100)->create()->each(function (Project $project) {
+        Project::factory(50)->create()->each(function (Project $project) {
             $genres = Genre::all()->random(rand(0, 3))->pluck('id')->toArray();
 
             $project->genres()->attach($genres);
         });
 
         Server::factory(10)->create();
+
+        Link::factory(50)->create();
     }
 }

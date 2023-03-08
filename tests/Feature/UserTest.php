@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Role;
 use App\Filament\Resources\UserResource;
 use App\Models\Post;
 use App\Models\User;
@@ -149,6 +150,18 @@ class UserTest extends TestCase
 
         self::assertModelExists($record);
         self::assertModelExists($post);
+    }
+
+    public function testCannotDeleteItSelf()
+    {
+        $record = User::factory()->createOne(['role' => Role::ADMIN]);
+        $this->actingAs($record);
+
+        Livewire::test(UserResource\Pages\ManageUsers::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertNotified();
+
+        self::assertModelExists($record);
     }
 
     public static function provideValidation(): array

@@ -17,9 +17,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create();
+
         Faq::factory(10)->create();
+
         Post::factory(100)->create();
+
         Genre::factory(10)->create();
-        Project::factory(100)->create();
+
+        Project::factory(100)->create()->each(function (Project $project) {
+            $genres = Genre::all()->random(rand(0, 3))->pluck('id')->toArray();
+
+            $project->genres()->attach($genres);
+        });
     }
 }

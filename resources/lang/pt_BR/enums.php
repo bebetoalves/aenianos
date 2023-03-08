@@ -2,6 +2,7 @@
 
 use App\Enums\Category;
 use App\Enums\Quality;
+use App\Enums\Role;
 use App\Enums\Season;
 use App\Enums\State;
 
@@ -33,5 +34,9 @@ return [
         Quality::FHD => 'Full HD',
         Quality::HD => 'HD',
         Quality::SD => 'SD',
+    ],
+    Role::class => [
+        Role::ADMIN => 'Administrador',
+        Role::MODERATOR => 'Moderador',
     ],
 ];

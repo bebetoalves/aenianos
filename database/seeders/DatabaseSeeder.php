@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Faq;
 use App\Models\Genre;
 use App\Models\Post;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,5 +20,6 @@ class DatabaseSeeder extends Seeder
         Faq::factory(10)->create();
         Post::factory(100)->create();
         Genre::factory(10)->create();
+        Project::factory(100)->create();
     }
 }

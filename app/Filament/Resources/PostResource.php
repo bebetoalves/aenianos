@@ -53,9 +53,9 @@ class PostResource extends Resource
                     ->limit(30)
                     ->label(__('models.post.title')),
 
-                Tables\Columns\TextColumn::make('content')
+                Tables\Columns\TextColumn::make('user.name')
                     ->limit(30)
-                    ->label(__('models.post.content')),
+                    ->label(__('models.post.user')),
 
                 Tables\Columns\IconColumn::make('draft')
                     ->label(__('models.post.draft'))

@@ -26,7 +26,7 @@ class PostTest extends TestCase
         Livewire::test(PostResource\Pages\ManagePosts::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('title')
-            ->assertCanRenderTableColumn('content')
+            ->assertCanRenderTableColumn('user.name')
             ->assertCanRenderTableColumn('draft')
             ->assertCanRenderTableColumn('created_at')
             ->assertCanRenderTableColumn('updated_at');

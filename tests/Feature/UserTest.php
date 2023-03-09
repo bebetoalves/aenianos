@@ -35,12 +35,14 @@ class UserTest extends TestCase
                     'role' => 'required',
                 ],
             ],
-            'max length name' => [
+            'max/min length' => [
                 'input' => [
                     'name' => Str::random(31),
+                    'password' => Str::length(7),
                 ],
                 'errors' => [
                     'name' => 'max',
+                    'password' => 'min',
                 ],
             ],
             'valid email' => [
@@ -51,15 +53,7 @@ class UserTest extends TestCase
                     'email' => 'email',
                 ],
             ],
-            'min length password' => [
-                'input' => [
-                    'password' => Str::length(7),
-                ],
-                'errors' => [
-                    'password' => 'min',
-                ],
-            ],
-            'unique email' => [
+            'unique fields' => [
                 'input' => [
                     'email' => fn () => User::factory()->createOne()->email,
                 ],
@@ -71,7 +65,7 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(UserResource::getUrl())->assertSuccessful();
     }
@@ -102,7 +96,8 @@ class UserTest extends TestCase
                 'email' => $data->email,
                 'password' => $password,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(User::class, [
             'name' => $data->name,
@@ -124,9 +119,11 @@ class UserTest extends TestCase
                 'email' => $data->email,
                 'password' => $password,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
         self::assertEquals($data->email, $record->email);
         self::assertEquals($data->role, $record->role);
@@ -144,9 +141,11 @@ class UserTest extends TestCase
                 'name' => $data->name,
                 'email' => $data->email,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
         self::assertEquals($data->email, $record->email);
         self::assertEquals($data->role, $record->role);
@@ -169,7 +168,7 @@ class UserTest extends TestCase
     public function cannotDeleteIfHasPosts()
     {
         $record = User::factory()->createOne();
-        $post = Post::factory()->createOne(['user_id' => $record->id]);
+        $post = Post::factory()->createOne(['user_id' => $record->getKey()]);
 
         Livewire::test(UserResource\Pages\ManageUsers::class)
             ->callTableAction(DeleteAction::class, $record)
@@ -192,35 +191,29 @@ class UserTest extends TestCase
         self::assertModelExists($record);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        if (is_callable($input['email'] ?? null)) {
-            $input['email'] = $input['email']();
-        }
-
         $data = User::factory()->makeOne();
+
+        $input = $this->executeCallables($input);
 
         Livewire::test(UserResource\Pages\ManageUsers::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
-        if (is_callable($input['email'] ?? null)) {
-            $input['email'] = $input['email']();
-        }
-
         if ($errors['password'] ?? null === 'required') {
             unset($errors['password']);
         }
 
         $data = User::factory()->makeOne();
         $record = User::factory()->createOne();
+
+        $input = $this->executeCallables($input);
 
         Livewire::test(UserResource\Pages\ManageUsers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))

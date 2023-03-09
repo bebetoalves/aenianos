@@ -7,6 +7,7 @@ use App\Filament\Forms\Components\PasswordInput;
 use App\Filament\Notifications\DeletedAborted;
 use App\Filament\Resources\UserResource\Pages\ManageUsers;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -24,7 +25,7 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Usuários';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
@@ -58,6 +59,9 @@ class UserResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -104,7 +108,7 @@ class UserResource extends Resource
                         }
 
                         if ($record->posts()->exists()) {
-                            DeletedAborted::notify('Por favor, apague as postagens associadas a este usuário para continuar.');
+                            DeletedAborted::notify('Apague as postagens associadas a este usuário para continuar.');
 
                             $action->cancel();
                         }

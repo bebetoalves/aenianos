@@ -16,12 +16,27 @@ use Tests\TestCase;
 
 class GenreTest extends TestCase
 {
-    public function testCanRenderPage(): void
+    public static function provideValidation(): array
+    {
+        return [
+            'required name' => [fn () => '', 'required'],
+            'max length name' => [fn () => Str::random(31), 'max'],
+            'unique name' => [fn () => Genre::factory()->createOne()->name, 'unique'],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderPage(): void
     {
         $this->get(GenreResource::getUrl())->assertSuccessful();
     }
 
-    public function testCanRenderColumns(): void
+    /**
+     * @test
+     */
+    public function canRenderColumns(): void
     {
         $data = Genre::factory(10)->create();
 
@@ -33,7 +48,10 @@ class GenreTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    public function testCreate(): void
+    /**
+     * @test
+     */
+    public function create(): void
     {
         $data = Genre::factory()->makeOne();
 
@@ -46,7 +64,10 @@ class GenreTest extends TestCase
     }
 
     #[DataProvider(methodName: 'provideValidation')]
-    public function testCreateValidation(Closure $closure, string $error): void
+    /**
+     * @test
+     */
+    public function createValidation(Closure $closure, string $error): void
     {
         $input = $closure();
 
@@ -57,7 +78,10 @@ class GenreTest extends TestCase
             ->assertHasPageActionErrors(['name' => $error]);
     }
 
-    public function testEdit()
+    /**
+     * @test
+     */
+    public function edit()
     {
         $record = Genre::factory()->createOne();
         $data = Genre::factory()->makeOne();
@@ -70,7 +94,10 @@ class GenreTest extends TestCase
     }
 
     #[DataProvider(methodName: 'provideValidation')]
-    public function testEditValidation(Closure $closure, string $error)
+    /**
+     * @test
+     */
+    public function editValidation(Closure $closure, string $error)
     {
         $input = $closure();
         $record = Genre::factory()->createOne();
@@ -80,7 +107,10 @@ class GenreTest extends TestCase
             ->assertHasTableActionErrors(['name' => $error]);
     }
 
-    public function testDelete()
+    /**
+     * @test
+     */
+    public function delete()
     {
         $record = Genre::factory()->createOne();
 
@@ -91,7 +121,10 @@ class GenreTest extends TestCase
         self::assertModelMissing($record);
     }
 
-    public function testCannotDeleteIfHasProjects()
+    /**
+     * @test
+     */
+    public function cannotDeleteIfHasProjects()
     {
         $record = Genre::factory()->createOne();
 
@@ -104,14 +137,5 @@ class GenreTest extends TestCase
 
         self::assertModelExists($record);
         self::assertModelExists($project);
-    }
-
-    public static function provideValidation(): array
-    {
-        return [
-            'required name' => [fn () => '', 'required'],
-            'max length name' => [fn () => Str::random(31), 'max'],
-            'unique name' => [fn () => Genre::factory()->createOne()->name, 'unique'],
-        ];
     }
 }

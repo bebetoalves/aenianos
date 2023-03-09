@@ -15,109 +15,6 @@ use Tests\TestCase;
 
 class ServerTest extends TestCase
 {
-    public function testCanRenderPage(): void
-    {
-        $this->get(ServerResource::getUrl())->assertSuccessful();
-    }
-
-    public function testCanRenderColumns(): void
-    {
-        $data = Server::factory(10)->create();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->assertCanSeeTableRecords($data)
-            ->assertCanRenderTableColumn('name')
-            ->assertCanRenderTableColumn('links_count')
-            ->assertCanRenderTableColumn('icon')
-            ->assertCanRenderTableColumn('created_at')
-            ->assertCanRenderTableColumn('updated_at');
-    }
-
-    public function testCreate(): void
-    {
-        $data = Server::factory()->makeOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callPageAction(CreateAction::class, [
-                'name' => $data->name,
-                'icon' => [$data->icon],
-            ]);
-
-        self::assertDatabaseHas(Server::class, [
-            'name' => $data->name,
-            'icon' => $data->icon,
-        ]);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testCreateValidation(array $input, array $errors): void
-    {
-        if (is_callable($input['name'])) {
-            $input['name'] = $input['name']();
-        }
-
-        $data = Server::factory()->makeOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    public function testEdit()
-    {
-        $record = Server::factory()->createOne();
-        $data = Server::factory()->makeOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(EditAction::class, $record, [
-                'name' => $data->name,
-                'icon' => [$data->icon],
-            ]);
-
-        $record->refresh();
-        self::assertEquals($data->name, $record->name);
-        self::assertEquals($data->icon, $record->icon);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testEditValidation(array $input, array $errors)
-    {
-        if (is_callable($input['name'])) {
-            $input['name'] = $input['name']();
-        }
-
-        $data = Server::factory()->makeOne();
-        $record = Server::factory()->createOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
-            ->assertHasTableActionErrors($errors);
-    }
-
-    public function testDelete()
-    {
-        $record = Server::factory()->createOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
-    }
-
-    public function testCannotDeleteIfHasLinks()
-    {
-        $record = Server::factory()->createOne();
-        $link = Link::factory()->createOne(['server_id' => $record->id]);
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertNotified();
-
-        self::assertModelExists($record);
-        self::assertModelExists($link);
-    }
-
     public static function provideValidation(): array
     {
         return [
@@ -150,5 +47,132 @@ class ServerTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderPage(): void
+    {
+        $this->get(ServerResource::getUrl())->assertSuccessful();
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderColumns(): void
+    {
+        $data = Server::factory(10)->create();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->assertCanSeeTableRecords($data)
+            ->assertCanRenderTableColumn('name')
+            ->assertCanRenderTableColumn('links_count')
+            ->assertCanRenderTableColumn('icon')
+            ->assertCanRenderTableColumn('created_at')
+            ->assertCanRenderTableColumn('updated_at');
+    }
+
+    /**
+     * @test
+     */
+    public function create(): void
+    {
+        $data = Server::factory()->makeOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callPageAction(CreateAction::class, [
+                'name' => $data->name,
+                'icon' => [$data->icon],
+            ]);
+
+        self::assertDatabaseHas(Server::class, [
+            'name' => $data->name,
+            'icon' => $data->icon,
+        ]);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function createValidation(array $input, array $errors): void
+    {
+        if (is_callable($input['name'])) {
+            $input['name'] = $input['name']();
+        }
+
+        $data = Server::factory()->makeOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function edit()
+    {
+        $record = Server::factory()->createOne();
+        $data = Server::factory()->makeOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(EditAction::class, $record, [
+                'name' => $data->name,
+                'icon' => [$data->icon],
+            ]);
+
+        $record->refresh();
+        self::assertEquals($data->name, $record->name);
+        self::assertEquals($data->icon, $record->icon);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function editValidation(array $input, array $errors)
+    {
+        if (is_callable($input['name'])) {
+            $input['name'] = $input['name']();
+        }
+
+        $data = Server::factory()->makeOne();
+        $record = Server::factory()->createOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
+            ->assertHasTableActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function delete()
+    {
+        $record = Server::factory()->createOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
+    }
+
+    /**
+     * @test
+     */
+    public function cannotDeleteIfHasLinks()
+    {
+        $record = Server::factory()->createOne();
+        $link = Link::factory()->createOne(['server_id' => $record->id]);
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertNotified();
+
+        self::assertModelExists($record);
+        self::assertModelExists($link);
     }
 }

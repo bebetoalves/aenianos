@@ -9,6 +9,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class HighlightTest extends TestCase
@@ -37,17 +38,13 @@ class HighlightTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(HighlightResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Highlight::factory(10)->create();
@@ -60,10 +57,8 @@ class HighlightTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Highlight::factory()->makeOne(['cover' => 'example.png']);
 
@@ -80,9 +75,7 @@ class HighlightTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canCreateWithoutCover()
     {
         $data = Highlight::factory()->makeOne();
@@ -99,23 +92,8 @@ class HighlightTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Highlight::factory()->makeOne();
-
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Highlight::factory()->createOne();
         $data = Highlight::factory()->makeOne(['cover' => 'example.png']);
@@ -133,9 +111,7 @@ class HighlightTest extends TestCase
         self::assertEquals($data->cover, $record->cover);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function editCanUseProjectCover()
     {
         $record = Highlight::factory()->createOne(['cover' => 'example.png']);
@@ -152,24 +128,8 @@ class HighlightTest extends TestCase
         self::assertNull($record->cover);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function editValidation(array $input, array $errors)
-    {
-        $data = Highlight::factory()->makeOne();
-        $record = Highlight::factory()->createOne();
-
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
-            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
-            ->assertHasTableActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
+    #[Test]
+    public function canDelete()
     {
         $record = Highlight::factory()->createOne();
 
@@ -178,5 +138,28 @@ class HighlightTest extends TestCase
             ->assertHasNoTableActionErrors();
 
         self::assertModelMissing($record);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Highlight::factory()->makeOne();
+
+        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function editValidation(array $input, array $errors)
+    {
+        $data = Highlight::factory()->makeOne();
+        $record = Highlight::factory()->createOne();
+
+        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
+            ->assertHasTableActionErrors($errors);
     }
 }

@@ -12,6 +12,7 @@ use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GenreTest extends TestCase
@@ -25,17 +26,13 @@ class GenreTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(GenreResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Genre::factory(10)->create();
@@ -48,10 +45,8 @@ class GenreTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Genre::factory()->makeOne();
 
@@ -63,25 +58,8 @@ class GenreTest extends TestCase
         self::assertDatabaseHas(Genre::class, ['name' => $data->name]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(Closure $closure, string $error): void
-    {
-        $input = $closure();
-
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callPageAction(CreateAction::class, [
-                'name' => $input,
-            ])
-            ->assertHasPageActionErrors(['name' => $error]);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Genre::factory()->createOne();
         $data = Genre::factory()->makeOne();
@@ -93,24 +71,8 @@ class GenreTest extends TestCase
         self::assertEquals($data->name, $record->name);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function editValidation(Closure $closure, string $error)
-    {
-        $input = $closure();
-        $record = Genre::factory()->createOne();
-
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callTableAction(EditAction::class, $record, ['name' => $input])
-            ->assertHasTableActionErrors(['name' => $error]);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
+    #[Test]
+    public function canDelete()
     {
         $record = Genre::factory()->createOne();
 
@@ -121,9 +83,7 @@ class GenreTest extends TestCase
         self::assertModelMissing($record);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cannotDeleteIfHasProjects()
     {
         $record = Genre::factory()->createOne();
@@ -137,5 +97,30 @@ class GenreTest extends TestCase
 
         self::assertModelExists($record);
         self::assertModelExists($project);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function createValidation(Closure $closure, string $error): void
+    {
+        $input = $closure();
+
+        Livewire::test(GenreResource\Pages\ManageGenres::class)
+            ->callPageAction(CreateAction::class, [
+                'name' => $input,
+            ])
+            ->assertHasPageActionErrors(['name' => $error]);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function editValidation(Closure $closure, string $error)
+    {
+        $input = $closure();
+        $record = Genre::factory()->createOne();
+
+        Livewire::test(GenreResource\Pages\ManageGenres::class)
+            ->callTableAction(EditAction::class, $record, ['name' => $input])
+            ->assertHasTableActionErrors(['name' => $error]);
     }
 }

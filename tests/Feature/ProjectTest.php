@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Livewire\TemporaryUploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProjectTest extends TestCase
@@ -103,17 +104,13 @@ class ProjectTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderList(): void
     {
         $this->get(ProjectResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Project::factory(10)->create();
@@ -127,18 +124,14 @@ class ProjectTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderCreate()
     {
         $this->get(ProjectResource::getUrl('create'))->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Project::factory()->makeOne();
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
@@ -170,35 +163,7 @@ class ProjectTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Project::factory()
-            ->makeOne([
-                'miniature' => $this->uploadedFile,
-                'cover' => $this->uploadedFile,
-            ]);
-
-        if (is_callable($input['title'] ?? null)) {
-            $input['title'] = $input['title']();
-        }
-
-        if (is_callable($input['genres'] ?? null)) {
-            $input['genres'] = $input['genres']();
-        }
-
-        Livewire::test(ProjectResource\Pages\CreateProject::class)
-            ->fillForm(array_merge($data->toArray(), $input))
-            ->call('create')
-            ->assertHasFormErrors($errors);
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderEdit()
     {
         $data = Project::factory()->createOne();
@@ -207,10 +172,8 @@ class ProjectTest extends TestCase
             ->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Project::factory()->createOne();
         $data = Project::factory()->makeOne();
@@ -242,10 +205,56 @@ class ProjectTest extends TestCase
         self::assertEquals($data->category, $record->category);
     }
 
+    #[Test]
+    public function canDelete()
+    {
+        $record = Project::factory()->createOne();
+
+        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
+            ->callPageAction(DeleteAction::class);
+
+        self::assertModelMissing($record);
+    }
+
+    #[Test]
+    public function cannotDeleteIfHasLinks()
+    {
+        $record = Project::factory()->createOne();
+        $link = Link::factory()->createOne(['project_id' => $record->id]);
+
+        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
+            ->callPageAction(DeleteAction::class);
+
+        self::assertModelExists($record);
+        self::assertModelExists($link);
+    }
+
+    #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Project::factory()
+            ->makeOne([
+                'miniature' => $this->uploadedFile,
+                'cover' => $this->uploadedFile,
+            ]);
+
+        if (is_callable($input['title'] ?? null)) {
+            $input['title'] = $input['title']();
+        }
+
+        if (is_callable($input['genres'] ?? null)) {
+            $input['genres'] = $input['genres']();
+        }
+
+        Livewire::test(ProjectResource\Pages\CreateProject::class)
+            ->fillForm(array_merge($data->toArray(), $input))
+            ->call('create')
+            ->assertHasFormErrors($errors);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
     public function editValidation(array $input, array $errors)
     {
         $data = Project::factory()
@@ -268,33 +277,5 @@ class ProjectTest extends TestCase
             ->fillForm(array_merge($data->toArray(), $input))
             ->call('save')
             ->assertHasFormErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
-    {
-        $record = Project::factory()->createOne();
-
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
-            ->callPageAction(DeleteAction::class);
-
-        self::assertModelMissing($record);
-    }
-
-    /**
-     * @test
-     */
-    public function cannotDeleteIfHasLinks()
-    {
-        $record = Project::factory()->createOne();
-        $link = Link::factory()->createOne(['project_id' => $record->id]);
-
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
-            ->callPageAction(DeleteAction::class);
-
-        self::assertModelExists($record);
-        self::assertModelExists($link);
     }
 }

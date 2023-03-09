@@ -10,6 +10,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProgressionTest extends TestCase
@@ -48,17 +49,13 @@ class ProgressionTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(ProgressionResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Progression::factory(10)->create();
@@ -72,10 +69,8 @@ class ProgressionTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Progression::factory()->makeOne();
 
@@ -94,27 +89,8 @@ class ProgressionTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Progression::factory()->makeOne();
-
-        if (is_callable($input['project_id'] ?? null)) {
-            $input['project_id'] = $input['project_id']();
-        }
-
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Progression::factory()->createOne();
         $data = Progression::factory()->makeOne();
@@ -132,10 +108,35 @@ class ProgressionTest extends TestCase
         self::assertEquals($data->project_id, $record->project_id);
     }
 
+    #[Test]
+    public function canDelete()
+    {
+        $record = Progression::factory()->createOne();
+
+        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
+    }
+
+    #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Progression::factory()->makeOne();
+
+        if (is_callable($input['project_id'] ?? null)) {
+            $input['project_id'] = $input['project_id']();
+        }
+
+        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
     public function editValidation(array $input, array $errors)
     {
         $data = Progression::factory()->makeOne();
@@ -148,19 +149,5 @@ class ProgressionTest extends TestCase
         Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
-    {
-        $record = Progression::factory()->createOne();
-
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
     }
 }

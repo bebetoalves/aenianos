@@ -10,6 +10,7 @@ use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FaqTest extends TestCase
@@ -38,17 +39,13 @@ class FaqTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(FaqResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Faq::factory(10)->create();
@@ -61,10 +58,8 @@ class FaqTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Faq::factory()->makeOne();
 
@@ -80,23 +75,8 @@ class FaqTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Faq::factory()->makeOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Faq::factory()->createOne();
         $data = Faq::factory()->makeOne();
@@ -112,10 +92,20 @@ class FaqTest extends TestCase
         self::assertEquals($data->answer, $record->answer);
     }
 
+    #[Test]
+    public function canDelete()
+    {
+        $record = Faq::factory()->createOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
+    }
+
+    #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
     public function editValidation(array $input, array $errors)
     {
         $data = Faq::factory()->makeOne();
@@ -126,17 +116,14 @@ class FaqTest extends TestCase
             ->assertHasTableActionErrors($errors);
     }
 
-    /**
-     * @test
-     */
-    public function delete()
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function createValidation(array $input, array $errors): void
     {
-        $record = Faq::factory()->createOne();
+        $data = Faq::factory()->makeOne();
 
         Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
     }
 }

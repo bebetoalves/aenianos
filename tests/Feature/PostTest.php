@@ -10,6 +10,7 @@ use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PostTest extends TestCase
@@ -41,17 +42,13 @@ class PostTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(PostResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Post::factory(10)->create();
@@ -65,10 +62,8 @@ class PostTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Post::factory()->makeOne();
 
@@ -88,23 +83,8 @@ class PostTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Post::factory()->makeOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Post::factory()->createOne();
         $data = Post::factory()->makeOne();
@@ -124,24 +104,8 @@ class PostTest extends TestCase
         self::assertEquals($data->draft, $record->draft);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function editValidation(array $input, array $errors)
-    {
-        $data = Post::factory()->makeOne();
-        $record = Post::factory()->createOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
-            ->assertHasTableActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
+    #[Test]
+    public function canDelete()
     {
         $record = Post::factory()->createOne();
 
@@ -150,5 +114,28 @@ class PostTest extends TestCase
             ->assertHasNoTableActionErrors();
 
         self::assertModelMissing($record);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Post::factory()->makeOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
+    public function editValidation(array $input, array $errors)
+    {
+        $data = Post::factory()->makeOne();
+        $record = Post::factory()->createOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
+            ->assertHasTableActionErrors($errors);
     }
 }

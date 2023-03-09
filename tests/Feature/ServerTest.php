@@ -11,6 +11,7 @@ use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ServerTest extends TestCase
@@ -49,17 +50,13 @@ class ServerTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderPage(): void
     {
         $this->get(ServerResource::getUrl())->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canRenderColumns(): void
     {
         $data = Server::factory(10)->create();
@@ -73,10 +70,8 @@ class ServerTest extends TestCase
             ->assertCanRenderTableColumn('updated_at');
     }
 
-    /**
-     * @test
-     */
-    public function create(): void
+    #[Test]
+    public function canCreate(): void
     {
         $data = Server::factory()->makeOne();
 
@@ -92,27 +87,8 @@ class ServerTest extends TestCase
         ]);
     }
 
-    #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
-    public function createValidation(array $input, array $errors): void
-    {
-        if (is_callable($input['name'])) {
-            $input['name'] = $input['name']();
-        }
-
-        $data = Server::factory()->makeOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function edit()
+    #[Test]
+    public function canEdit()
     {
         $record = Server::factory()->createOne();
         $data = Server::factory()->makeOne();
@@ -128,10 +104,49 @@ class ServerTest extends TestCase
         self::assertEquals($data->icon, $record->icon);
     }
 
+    #[Test]
+    public function canDelete()
+    {
+        $record = Server::factory()->createOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
+    }
+
+    #[Test]
+    public function cannotDeleteIfHasLinks()
+    {
+        $record = Server::factory()->createOne();
+        $link = Link::factory()->createOne(['server_id' => $record->id]);
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertNotified();
+
+        self::assertModelExists($record);
+        self::assertModelExists($link);
+    }
+
+    #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    /**
-     * @test
-     */
+    public function createValidation(array $input, array $errors): void
+    {
+        if (is_callable($input['name'])) {
+            $input['name'] = $input['name']();
+        }
+
+        $data = Server::factory()->makeOne();
+
+        Livewire::test(ServerResource\Pages\ManageServers::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    #[Test]
+    #[DataProvider(methodName: 'provideValidation')]
     public function editValidation(array $input, array $errors)
     {
         if (is_callable($input['name'])) {
@@ -144,35 +159,5 @@ class ServerTest extends TestCase
         Livewire::test(ServerResource\Pages\ManageServers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
-    }
-
-    /**
-     * @test
-     */
-    public function delete()
-    {
-        $record = Server::factory()->createOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
-    }
-
-    /**
-     * @test
-     */
-    public function cannotDeleteIfHasLinks()
-    {
-        $record = Server::factory()->createOne();
-        $link = Link::factory()->createOne(['server_id' => $record->id]);
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertNotified();
-
-        self::assertModelExists($record);
-        self::assertModelExists($link);
     }
 }

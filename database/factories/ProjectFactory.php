@@ -11,8 +11,8 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(),
-            'alternative_title' => fake()->randomElement([null, fake()->sentence()]),
+            'title' => fake()->sentence(nbWords: 2),
+            'alternative_title' => fake()->randomElement([null, fake()->sentence(nbWords: 2)]),
             'synopsis' => fake()->realText(),
             'episodes' => fake()->randomNumber(nbDigits: 2),
             'year' => fake()->year(),

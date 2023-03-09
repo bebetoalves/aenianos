@@ -24,6 +24,8 @@ class FaqResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
+    protected static ?int $navigationSort = 9;
+
     public static function form(Form $form): Form
     {
         return $form

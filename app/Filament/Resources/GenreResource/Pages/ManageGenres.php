@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\GenreResource\Pages;
 
 use App\Filament\Resources\GenreResource;
-use Filament\Pages\Actions;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageGenres extends ManageRecords
@@ -13,7 +13,7 @@ class ManageGenres extends ManageRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

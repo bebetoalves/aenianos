@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\LinkResource\Pages;
 
 use App\Filament\Resources\LinkResource;
-use Filament\Pages\Actions;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageLinks extends ManageRecords
@@ -13,7 +13,7 @@ class ManageLinks extends ManageRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

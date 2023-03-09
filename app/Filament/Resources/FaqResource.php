@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\FaqResource\Pages;
+use App\Filament\Resources\FaqResource\Pages\ManageFaqs;
 use App\Models\Faq;
-use Filament\Forms;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 
 class FaqResource extends Resource
 {
@@ -24,13 +27,13 @@ class FaqResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('question')
+                TextInput::make('question')
                     ->label(__('models.faq.question'))
                     ->maxLength(100)
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\MarkdownEditor::make('answer')
+                MarkdownEditor::make('answer')
                     ->label(__('models.faq.answer'))
                     ->required()
                     ->columnSpanFull(),
@@ -41,26 +44,26 @@ class FaqResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('question')
+                TextColumn::make('question')
                     ->label(__('models.faq.question'))
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('answer')
+                TextColumn::make('answer')
                     ->label(__('models.faq.answer'))
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([]);
     }
@@ -68,7 +71,7 @@ class FaqResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageFaqs::route('/'),
+            'index' => ManageFaqs::route('/'),
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\HighlightResource\Pages;
 
 use App\Filament\Resources\HighlightResource;
-use Filament\Pages\Actions;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageHighlights extends ManageRecords
@@ -13,7 +13,7 @@ class ManageHighlights extends ManageRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

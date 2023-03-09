@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\FaqResource\Pages;
 
 use App\Filament\Resources\FaqResource;
-use Filament\Pages\Actions;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageFaqs extends ManageRecords
@@ -13,7 +13,7 @@ class ManageFaqs extends ManageRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

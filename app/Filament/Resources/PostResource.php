@@ -2,13 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PostResource\Pages;
+use App\Filament\Resources\PostResource\Pages\ManagePosts;
 use App\Models\Post;
-use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 
 class PostResource extends Resource
 {
@@ -24,23 +30,23 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                TextInput::make('title')
                     ->label(__('models.post.title'))
                     ->required()
                     ->maxLength(100)
                     ->columnSpanFull(),
 
-                Forms\Components\MarkdownEditor::make('content')
+                MarkdownEditor::make('content')
                     ->label(__('models.post.content'))
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\FileUpload::make('image')
+                FileUpload::make('image')
                     ->label(__('models.post.image'))
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\Toggle::make('draft')
+                Toggle::make('draft')
                     ->label(__('models.post.draft')),
             ]);
     }
@@ -49,30 +55,30 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->limit(30)
                     ->label(__('models.post.title')),
 
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->limit(30)
                     ->label(__('models.post.user')),
 
-                Tables\Columns\IconColumn::make('draft')
+                IconColumn::make('draft')
                     ->label(__('models.post.draft'))
                     ->boolean(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([]);
     }
@@ -80,7 +86,7 @@ class PostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePosts::route('/'),
+            'index' => ManagePosts::route('/'),
         ];
     }
 }

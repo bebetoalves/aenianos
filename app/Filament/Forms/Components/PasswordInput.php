@@ -2,13 +2,13 @@
 
 namespace App\Filament\Forms\Components;
 
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 
 class PasswordInput
 {
-    public static function make(string $name): Forms\Components\TextInput
+    public static function make(string $name): TextInput
     {
-        return Forms\Components\TextInput::make($name)
+        return TextInput::make($name)
             ->password()
             ->minLength(8);
     }

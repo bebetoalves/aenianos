@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\FaqResource;
+use App\Filament\Resources\FaqResource\Pages\ManageFaqs;
 use App\Models\Faq;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -20,33 +21,35 @@ class FaqTest extends TestCase
         return [
             'required fields' => [
                 'input' => [
-                    'question' => '',
-                    'answer' => '',
+                    'question' => null,
+                    'answer' => null,
                 ],
                 'errors' => [
                     'question' => 'required',
                     'answer' => 'required',
                 ],
             ],
-            'max length question' => [
+            'max length' => [
                 'input' => [
                     'question' => Str::random(101),
+                    'answer' => Str::random(281),
                 ],
                 'errors' => [
                     'question' => 'max',
+                    'answer' => 'max',
                 ],
             ],
         ];
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(FaqResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
-    public function canRenderColumns(): void
+    public function canRenderTableColumns(): void
     {
         $data = Faq::factory(10)->create();
 
@@ -63,11 +66,12 @@ class FaqTest extends TestCase
     {
         $data = Faq::factory()->makeOne();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->callPageAction(CreateAction::class, [
                 'question' => $data->question,
                 'answer' => $data->answer,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Faq::class, [
             'question' => $data->question,
@@ -81,13 +85,15 @@ class FaqTest extends TestCase
         $record = Faq::factory()->createOne();
         $data = Faq::factory()->makeOne();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->callTableAction(EditAction::class, $record, [
                 'question' => $data->question,
                 'answer' => $data->answer,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->question, $record->question);
         self::assertEquals($data->answer, $record->answer);
     }
@@ -104,9 +110,18 @@ class FaqTest extends TestCase
         self::assertModelMissing($record);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
+    {
+        $data = Faq::factory()->makeOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
         $data = Faq::factory()->makeOne();
         $record = Faq::factory()->createOne();
@@ -114,16 +129,5 @@ class FaqTest extends TestCase
         Livewire::test(FaqResource\Pages\ManageFaqs::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
-    }
-
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Faq::factory()->makeOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
     }
 }

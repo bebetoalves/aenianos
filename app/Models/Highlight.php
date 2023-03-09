@@ -19,4 +19,9 @@ class Highlight extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function cover(): string
+    {
+        return $this->cover ?? $this->project->cover;
+    }
 }

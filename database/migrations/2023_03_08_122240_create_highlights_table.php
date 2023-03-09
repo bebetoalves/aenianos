@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('highlights', function (Blueprint $table) {
             $table->id();
             $table->string('cover')->nullable();
-            $table->foreignIdFor(Project::class)->constrained();
+            $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

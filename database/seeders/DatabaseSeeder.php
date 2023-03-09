@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Faq;
 use App\Models\Genre;
+use App\Models\Highlight;
 use App\Models\Link;
 use App\Models\Post;
 use App\Models\Progression;
@@ -38,5 +39,7 @@ class DatabaseSeeder extends Seeder
         Link::factory(50)->create();
 
         Progression::factory(5)->create();
+
+        Highlight::factory(5)->create();
     }
 }

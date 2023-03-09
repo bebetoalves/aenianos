@@ -48,6 +48,11 @@ return [
         'links' => 'Links',
         'genres' => 'Gêneros',
     ],
+    'highlight' => [
+        'project' => 'Projeto',
+        'cover' => 'Capa',
+        'use_project_cover' => 'Usar capa do projeto',
+    ],
     'common' => [
         'created_at' => 'Data de Criação',
         'updated_at' => 'Última Atualização',

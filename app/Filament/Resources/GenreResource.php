@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Notifications\DeletedAborted;
 use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
+use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -36,6 +37,9 @@ class GenreResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

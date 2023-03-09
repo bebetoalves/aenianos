@@ -40,7 +40,7 @@ class ServerTest extends TestCase
             ],
             'unique fields' => [
                 'input' => [
-                    'name' => fn () => Server::factory()->createOne()->name,
+                    'name' => fn () => Server::factory()->create()->name,
                 ],
                 'errors' => [
                     'name' => 'unique',
@@ -72,7 +72,7 @@ class ServerTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Server::factory()->makeOne();
+        $data = Server::factory()->make();
 
         Livewire::test(ManageServers::class)
             ->callPageAction(CreateAction::class, [
@@ -88,10 +88,10 @@ class ServerTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Server::factory()->createOne();
-        $data = Server::factory()->makeOne();
+        $record = Server::factory()->create();
+        $data = Server::factory()->make();
 
         Livewire::test(ManageServers::class)
             ->callTableAction(EditAction::class, $record, [
@@ -106,9 +106,9 @@ class ServerTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Server::factory()->createOne();
+        $record = Server::factory()->create();
 
         Livewire::test(ManageServers::class)
             ->callTableAction(DeleteAction::class, $record)
@@ -118,10 +118,10 @@ class ServerTest extends TestCase
     }
 
     #[Test]
-    public function cannotDeleteIfHasLinks()
+    public function cannotDeleteIfHasLinks(): void
     {
-        $record = Server::factory()->createOne();
-        $link = Link::factory()->createOne(['server_id' => $record->id]);
+        $record = Server::factory()->create();
+        $link = Link::factory()->create(['server_id' => $record->getKey()]);
 
         Livewire::test(ManageServers::class)
             ->callTableAction(DeleteAction::class, $record)
@@ -134,7 +134,7 @@ class ServerTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Server::factory()->makeOne(['icon' => [placekitten(32, 32)]]);
+        $data = Server::factory()->make(['icon' => [placekitten(32, 32)]]);
         $input = $this->executeCallables($input);
 
         Livewire::test(ManageServers::class)
@@ -143,10 +143,10 @@ class ServerTest extends TestCase
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Server::factory()->makeOne(['icon' => [placekitten(32, 32)]]);
-        $record = Server::factory()->createOne();
+        $data = Server::factory()->make(['icon' => [placekitten(32, 32)]]);
+        $record = Server::factory()->create();
 
         $input = $this->executeCallables($input);
 

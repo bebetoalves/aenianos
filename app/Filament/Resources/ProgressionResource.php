@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\State;
 use App\Filament\Resources\ProgressionResource\Pages\ManageProgressions;
 use App\Models\Progression;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -51,6 +52,9 @@ class ProgressionResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

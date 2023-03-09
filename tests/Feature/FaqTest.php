@@ -53,7 +53,7 @@ class FaqTest extends TestCase
     {
         $data = Faq::factory(10)->create();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('question')
             ->assertCanRenderTableColumn('answer')
@@ -64,7 +64,7 @@ class FaqTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Faq::factory()->makeOne();
+        $data = Faq::factory()->make();
 
         Livewire::test(ManageFaqs::class)
             ->callPageAction(CreateAction::class, [
@@ -80,10 +80,10 @@ class FaqTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Faq::factory()->createOne();
-        $data = Faq::factory()->makeOne();
+        $record = Faq::factory()->create();
+        $data = Faq::factory()->make();
 
         Livewire::test(ManageFaqs::class)
             ->callTableAction(EditAction::class, $record, [
@@ -99,11 +99,11 @@ class FaqTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Faq::factory()->createOne();
+        $record = Faq::factory()->create();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -113,20 +113,20 @@ class FaqTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Faq::factory()->makeOne();
+        $data = Faq::factory()->make();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Faq::factory()->makeOne();
-        $record = Faq::factory()->createOne();
+        $data = Faq::factory()->make();
+        $record = Faq::factory()->create();
 
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+        Livewire::test(ManageFaqs::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

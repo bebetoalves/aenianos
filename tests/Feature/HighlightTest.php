@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\HighlightResource;
+use App\Filament\Resources\HighlightResource\Pages\ManageHighlights;
 use App\Models\Highlight;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -49,7 +50,7 @@ class HighlightTest extends TestCase
     {
         $data = Highlight::factory(10)->create();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('project.title')
             ->assertCanRenderTableColumn('cover')
@@ -60,9 +61,9 @@ class HighlightTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Highlight::factory()->makeOne();
+        $data = Highlight::factory()->make();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callPageAction(CreateAction::class, [
                 'project_id' => $data->project_id,
                 'cover' => [$data->cover],
@@ -77,11 +78,11 @@ class HighlightTest extends TestCase
     }
 
     #[Test]
-    public function canCreateUsingProjectCover()
+    public function canCreateUsingProjectCover(): void
     {
-        $data = Highlight::factory()->makeOne();
+        $data = Highlight::factory()->make();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callPageAction(CreateAction::class, [
                 'project_id' => $data->project_id,
                 'use_project_cover' => true,
@@ -94,12 +95,12 @@ class HighlightTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Highlight::factory()->createOne();
-        $data = Highlight::factory()->makeOne();
+        $record = Highlight::factory()->create();
+        $data = Highlight::factory()->make();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callTableAction(EditAction::class, $record, [
                 'project_id' => $data->project_id,
                 'cover' => [$data->cover],
@@ -114,12 +115,12 @@ class HighlightTest extends TestCase
     }
 
     #[Test]
-    public function canEditUseProjectCover()
+    public function canEditUseProjectCover(): void
     {
-        $record = Highlight::factory()->createOne(['cover' => placekitten(1280, 720)]);
-        $data = Highlight::factory()->makeOne();
+        $record = Highlight::factory()->create(['cover' => placekitten(1280, 720)]);
+        $data = Highlight::factory()->make();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callTableAction(EditAction::class, $record, [
                 'project_id' => $data->project_id,
                 'use_project_cover' => true,
@@ -133,11 +134,11 @@ class HighlightTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Highlight::factory()->createOne();
+        $record = Highlight::factory()->create();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -147,20 +148,20 @@ class HighlightTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Highlight::factory()->makeOne();
+        $data = Highlight::factory()->make();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Highlight::factory()->makeOne();
-        $record = Highlight::factory()->createOne();
+        $data = Highlight::factory()->make();
+        $record = Highlight::factory()->create();
 
-        Livewire::test(HighlightResource\Pages\ManageHighlights::class)
+        Livewire::test(ManageHighlights::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

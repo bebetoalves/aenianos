@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\PostResource;
+use App\Filament\Resources\PostResource\Pages\ManagePosts;
 use App\Models\Post;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -52,7 +53,7 @@ class PostTest extends TestCase
     {
         $data = Post::factory(10)->create();
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('title')
             ->assertCanRenderTableColumn('user.name')
@@ -64,9 +65,9 @@ class PostTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Post::factory()->makeOne();
+        $data = Post::factory()->make();
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->callPageAction(CreateAction::class, [
                 'title' => $data->title,
                 'content' => $data->content,
@@ -84,12 +85,12 @@ class PostTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Post::factory()->createOne();
-        $data = Post::factory()->makeOne();
+        $record = Post::factory()->create();
+        $data = Post::factory()->make();
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->callTableAction(EditAction::class, $record, [
                 'title' => $data->title,
                 'content' => $data->content,
@@ -107,11 +108,11 @@ class PostTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Post::factory()->createOne();
+        $record = Post::factory()->create();
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -121,20 +122,20 @@ class PostTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Post::factory()->makeOne(['image' => [placekitten(1280, 720)]]);
+        $data = Post::factory()->make(['image' => [placekitten(1280, 720)]]);
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Post::factory()->makeOne(['image' => [placekitten(1280, 720)]]);
-        $record = Post::factory()->createOne();
+        $data = Post::factory()->make(['image' => [placekitten(1280, 720)]]);
+        $record = Post::factory()->create();
 
-        Livewire::test(PostResource\Pages\ManagePosts::class)
+        Livewire::test(ManagePosts::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

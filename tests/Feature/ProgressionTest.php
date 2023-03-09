@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\State;
 use App\Filament\Resources\ProgressionResource;
+use App\Filament\Resources\ProgressionResource\Pages\ManageProgressions;
 use App\Models\Progression;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -43,7 +44,7 @@ class ProgressionTest extends TestCase
             ],
             'unique fields' => [
                 'input' => [
-                    'project_id' => fn () => Progression::factory()->createOne()->project_id,
+                    'project_id' => fn () => Progression::factory()->create()->project_id,
                 ],
                 'errors' => [
                     'project_id' => 'unique',
@@ -63,7 +64,7 @@ class ProgressionTest extends TestCase
     {
         $data = Progression::factory(10)->create();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('media')
             ->assertCanRenderTableColumn('project.title')
@@ -75,9 +76,9 @@ class ProgressionTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Progression::factory()->makeOne();
+        $data = Progression::factory()->make();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callPageAction(CreateAction::class, [
                 'media' => $data->media,
                 'states' => $data->states->toArray(),
@@ -93,12 +94,12 @@ class ProgressionTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Progression::factory()->createOne();
-        $data = Progression::factory()->makeOne();
+        $record = Progression::factory()->create();
+        $data = Progression::factory()->make();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, [
                 'media' => $data->media,
                 'states' => $data->states->toArray(),
@@ -114,11 +115,11 @@ class ProgressionTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Progression::factory()->createOne();
+        $record = Progression::factory()->create();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -129,25 +130,25 @@ class ProgressionTest extends TestCase
     #[DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Progression::factory()->makeOne();
+        $data = Progression::factory()->make();
 
         $input = $this->executeCallables($input);
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Progression::factory()->makeOne();
-        $record = Progression::factory()->createOne();
+        $data = Progression::factory()->make();
+        $record = Progression::factory()->create();
 
         $input = $this->executeCallables($input);
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

@@ -9,7 +9,7 @@ class ServerFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company(),
+            'name' => fake()->word(),
             'icon' => placekitten(width: 32, height: 32),
         ];
     }

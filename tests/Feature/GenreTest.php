@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\GenreResource;
+use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
 use App\Models\Project;
 use Filament\Pages\Actions\CreateAction;
@@ -28,7 +29,7 @@ class GenreTest extends TestCase
                 'errors' => ['name' => 'max'],
             ],
             'unique fields' => [
-                'input' => ['name' => fn () => Genre::factory()->createOne()->name],
+                'input' => ['name' => fn () => Genre::factory()->create()->name],
                 'errors' => ['name' => 'unique'],
             ],
         ];
@@ -45,7 +46,7 @@ class GenreTest extends TestCase
     {
         $data = Genre::factory(10)->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('name')
             ->assertCanRenderTableColumn('projects_count')
@@ -56,9 +57,9 @@ class GenreTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Genre::factory()->makeOne();
+        $data = Genre::factory()->make();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
             ])
@@ -68,12 +69,12 @@ class GenreTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Genre::factory()->createOne();
-        $data = Genre::factory()->makeOne();
+        $record = Genre::factory()->create();
+        $data = Genre::factory()->make();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(EditAction::class, $record, ['name' => $data->name])
             ->assertHasNoTableActionErrors();
 
@@ -83,11 +84,11 @@ class GenreTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Genre::factory()->createOne();
+        $record = Genre::factory()->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -95,14 +96,14 @@ class GenreTest extends TestCase
     }
 
     #[Test]
-    public function cannotDeleteIfHasProjects()
+    public function cannotDeleteIfHasProjects(): void
     {
-        $record = Genre::factory()->createOne();
+        $record = Genre::factory()->create();
 
-        $project = Project::factory()->createOne();
+        $project = Project::factory()->create();
         $project->genres()->attach($record->getKey());
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertNotified();
 
@@ -115,18 +116,18 @@ class GenreTest extends TestCase
     {
         $input = $this->executeCallables($input);
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callPageAction(CreateAction::class, $input)
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
         $input = $this->executeCallables($input);
-        $record = Genre::factory()->createOne();
+        $record = Genre::factory()->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(EditAction::class, $record, $input)
             ->assertHasTableActionErrors($errors);
     }

@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\ProjectResource;
+use App\Filament\Resources\ProjectResource\Pages\CreateProject;
+use App\Filament\Resources\ProjectResource\Pages\EditProject;
+use App\Filament\Resources\ProjectResource\Pages\ListProjects;
 use App\Models\Genre;
 use App\Models\Project;
 use Filament\Pages\Actions\DeleteAction;
@@ -72,7 +75,7 @@ class ProjectTest extends TestCase
             ],
             'unique fields' => [
                 'input' => [
-                    'title' => fn () => Project::factory()->createOne()->title,
+                    'title' => fn () => Project::factory()->create()->title,
                 ],
                 'errors' => [
                     'title' => 'unique',
@@ -92,7 +95,7 @@ class ProjectTest extends TestCase
     {
         $data = Project::factory(10)->create();
 
-        Livewire::test(ProjectResource\Pages\ListProjects::class)
+        Livewire::test(ListProjects::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('title')
             ->assertCanRenderTableColumn('links_count')
@@ -102,7 +105,7 @@ class ProjectTest extends TestCase
     }
 
     #[Test]
-    public function canRenderCreate()
+    public function canRenderCreate(): void
     {
         $this->get(ProjectResource::getUrl('create'))->assertSuccessful();
     }
@@ -110,10 +113,10 @@ class ProjectTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Project::factory()->makeOne();
+        $data = Project::factory()->make();
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
 
-        Livewire::test(ProjectResource\Pages\CreateProject::class)
+        Livewire::test(CreateProject::class)
             ->fillForm([
                 'title' => $data->title,
                 'alternative_title' => $data->alternative_title,
@@ -141,22 +144,22 @@ class ProjectTest extends TestCase
     }
 
     #[Test]
-    public function canRenderEdit()
+    public function canRenderEdit(): void
     {
-        $data = Project::factory()->createOne();
+        $data = Project::factory()->create();
 
         $this->get(ProjectResource::getUrl('edit', ['record' => $data]))
             ->assertSuccessful();
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Project::factory()->createOne();
-        $data = Project::factory()->makeOne();
+        $record = Project::factory()->create();
+        $data = Project::factory()->make();
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
 
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
+        Livewire::test(EditProject::class, ['record' => $record->slug])
             ->fillForm([
                 'title' => $data->title,
                 'alternative_title' => $data->alternative_title,
@@ -184,11 +187,11 @@ class ProjectTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Project::factory()->createOne();
+        $record = Project::factory()->create();
 
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
+        Livewire::test(EditProject::class, ['record' => $record->slug])
             ->callPageAction(DeleteAction::class);
 
         self::assertModelMissing($record);
@@ -197,32 +200,32 @@ class ProjectTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Project::factory()->makeOne([
+        $data = Project::factory()->make([
             'miniature' => $this->uploadedFile,
             'cover' => $this->uploadedFile,
         ]);
 
         $input = $this->executeCallables($input);
 
-        Livewire::test(ProjectResource\Pages\CreateProject::class)
+        Livewire::test(CreateProject::class)
             ->fillForm(array_merge($data->toArray(), $input))
             ->call('create')
             ->assertHasFormErrors($errors);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]
-    public function canValidateEdit(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
         $data = Project::factory()
-            ->makeOne([
+            ->make([
                 'miniature' => $this->uploadedFile,
                 'cover' => $this->uploadedFile,
             ]);
 
         $input = $this->executeCallables($input);
-        $record = Project::factory()->createOne();
+        $record = Project::factory()->create();
 
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
+        Livewire::test(EditProject::class, ['record' => $record->slug])
             ->fillForm(array_merge($data->toArray(), $input))
             ->call('save')
             ->assertHasFormErrors($errors);

@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Casts\StateArray;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Progression extends Model
 {
@@ -21,8 +21,8 @@ class Progression extends Model
         'states' => StateArray::class,
     ];
 
-    public function project(): BelongsToMany
+    public function project(): BelongsTo
     {
-        return $this->belongsToMany(Project::class);
+        return $this->belongsTo(Project::class);
     }
 }

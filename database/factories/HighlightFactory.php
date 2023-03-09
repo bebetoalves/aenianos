@@ -10,7 +10,7 @@ class HighlightFactory extends Factory
     public function definition(): array
     {
         return [
-            'cover' => fake()->randomElement([null, placekitten(width: 1280, height: 720)]),
+            'cover' => placekitten(width: 1280, height: 720),
             'project_id' => Project::factory(),
         ];
     }

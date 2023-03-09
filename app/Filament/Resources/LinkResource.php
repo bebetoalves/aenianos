@@ -22,7 +22,7 @@ class LinkResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Links';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-link';
 
     public static function form(Form $form): Form
     {

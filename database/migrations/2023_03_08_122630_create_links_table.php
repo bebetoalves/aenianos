@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('url');
             $table->string('quality')->default(Quality::HD);
-            $table->foreignIdFor(Project::class)->constrained();
-            $table->foreignIdFor(Server::class)->constrained();
+            $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Server::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -29,7 +29,7 @@ class ProjectResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Projetos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-film';
 
     public static function form(Form $form): Form
     {
@@ -57,6 +57,7 @@ class ProjectResource extends Resource
 
                         MarkdownEditor::make('synopsis')
                             ->label(__('models.project.synopsis'))
+                            ->maxLength(560)
                             ->required(),
 
                         Grid::make()

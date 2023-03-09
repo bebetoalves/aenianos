@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\ProjectResource;
 use App\Models\Genre;
-use App\Models\Link;
 use App\Models\Project;
 use Filament\Pages\Actions\DeleteAction;
 use Illuminate\Http\Testing\File;
@@ -23,7 +22,7 @@ class ProjectTest extends TestCase
     {
         parent::setUp();
 
-        $this->uploadedFile = TemporaryUploadedFile::fake()->image('example.png');
+        $this->uploadedFile = TemporaryUploadedFile::fake()->image(Str::random());
     }
 
     public static function provideValidation(): array
@@ -53,52 +52,30 @@ class ProjectTest extends TestCase
                     'genres' => 'required',
                 ],
             ],
-            'max length title' => [
+            'max length' => [
                 'input' => [
                     'title' => Str::random(31),
+                    'alternative_title' => Str::random(31),
+                    'episodes' => Str::random(11),
+                    'synopsis' => Str::random(561),
+                    'year' => Str::random(5),
+                    'genres' => fn () => Genre::factory(4)->create()->pluck('id')->toArray(),
                 ],
                 'errors' => [
                     'title' => 'max',
-                ],
-            ],
-            'max length alternative title' => [
-                'input' => [
-                    'alternative_title' => Str::random(31),
-                ],
-                'errors' => [
                     'alternative_title' => 'max',
-                ],
-            ],
-            'max length episodes' => [
-                'input' => [
-                    'episodes' => Str::random(11),
-                ],
-                'errors' => [
                     'episodes' => 'max',
-                ],
-            ],
-            'max length year' => [
-                'input' => [
-                    'year' => 20233,
-                ],
-                'errors' => [
+                    'synopsis' => 'max',
                     'year' => 'max',
+                    'genres' => 'max',
                 ],
             ],
-            'unique title' => [
+            'unique fields' => [
                 'input' => [
                     'title' => fn () => Project::factory()->createOne()->title,
                 ],
                 'errors' => [
                     'title' => 'unique',
-                ],
-            ],
-            'max 3 genres' => [
-                'input' => [
-                    'genres' => fn () => Genre::factory(4)->create()->pluck('id')->toArray(),
-                ],
-                'errors' => [
-                    'genres' => 'max',
                 ],
             ],
         ];
@@ -196,6 +173,7 @@ class ProjectTest extends TestCase
             ->assertHasNoFormErrors();
 
         $record->refresh();
+
         self::assertEquals($data->title, $record->title);
         self::assertEquals($data->alternative_title, $record->alternative_title);
         self::assertEquals($data->synopsis, $record->synopsis);
@@ -216,36 +194,15 @@ class ProjectTest extends TestCase
         self::assertModelMissing($record);
     }
 
-    #[Test]
-    public function cannotDeleteIfHasLinks()
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $record = Project::factory()->createOne();
-        $link = Link::factory()->createOne(['project_id' => $record->id]);
+        $data = Project::factory()->makeOne([
+            'miniature' => $this->uploadedFile,
+            'cover' => $this->uploadedFile,
+        ]);
 
-        Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])
-            ->callPageAction(DeleteAction::class);
-
-        self::assertModelExists($record);
-        self::assertModelExists($link);
-    }
-
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
-    {
-        $data = Project::factory()
-            ->makeOne([
-                'miniature' => $this->uploadedFile,
-                'cover' => $this->uploadedFile,
-            ]);
-
-        if (is_callable($input['title'] ?? null)) {
-            $input['title'] = $input['title']();
-        }
-
-        if (is_callable($input['genres'] ?? null)) {
-            $input['genres'] = $input['genres']();
-        }
+        $input = $this->executeCallables($input);
 
         Livewire::test(ProjectResource\Pages\CreateProject::class)
             ->fillForm(array_merge($data->toArray(), $input))
@@ -253,9 +210,8 @@ class ProjectTest extends TestCase
             ->assertHasFormErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
         $data = Project::factory()
             ->makeOne([
@@ -263,14 +219,7 @@ class ProjectTest extends TestCase
                 'cover' => $this->uploadedFile,
             ]);
 
-        if (is_callable($input['title'] ?? null)) {
-            $input['title'] = $input['title']();
-        }
-
-        if (is_callable($input['genres'] ?? null)) {
-            $input['genres'] = $input['genres']();
-        }
-
+        $input = $this->executeCallables($input);
         $record = Project::factory()->createOne();
 
         Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $record->slug])

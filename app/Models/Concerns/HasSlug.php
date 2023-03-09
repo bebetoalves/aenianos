@@ -10,11 +10,6 @@ trait HasSlug
 
     private string $databaseSlugField = 'slug';
 
-    protected function defineSluggableField(): string
-    {
-        return '';
-    }
-
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -25,5 +20,10 @@ trait HasSlug
     public function getRouteKeyName(): string
     {
         return $this->databaseSlugField;
+    }
+
+    protected function defineSluggableField(): string
+    {
+        return '';
     }
 }

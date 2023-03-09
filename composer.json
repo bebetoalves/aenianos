@@ -6,10 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "ext-pdo": "*",
         "bensampo/laravel-enum": "^6.3.1",
         "filament/filament": "^2.17.14",
         "guzzlehttp/guzzle": "^7.5",
-        "laravel/framework": "^10.3.2",
+        "laravel/framework": "^10.3.3",
         "laravel/sanctum": "^3.2.1",
         "laravel/tinker": "^2.8.1",
         "spatie/laravel-sluggable": "^3.4.2"
@@ -21,8 +22,9 @@
         "laravel/sail": "^1.21.2",
         "mockery/mockery": "^1.5.1",
         "nunomaduro/collision": "^7.1",
-        "phpunit/phpunit": "^10.0.14",
-        "spatie/laravel-ignition": "^2.0"
+        "phpunit/phpunit": "^10.0.15",
+        "spatie/laravel-ignition": "^2.0",
+        "tightenco/duster": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -54,7 +56,8 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "pint": "pint"
+        "lint": "duster lint",
+        "fix": "duster fix"
     },
     "extra": {
         "laravel": {

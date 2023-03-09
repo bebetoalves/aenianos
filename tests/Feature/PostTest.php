@@ -14,96 +14,6 @@ use Tests\TestCase;
 
 class PostTest extends TestCase
 {
-    public function testCanRenderPage(): void
-    {
-        $this->get(PostResource::getUrl())->assertSuccessful();
-    }
-
-    public function testCanRenderColumns(): void
-    {
-        $data = Post::factory(10)->create();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->assertCanSeeTableRecords($data)
-            ->assertCanRenderTableColumn('title')
-            ->assertCanRenderTableColumn('user.name')
-            ->assertCanRenderTableColumn('draft')
-            ->assertCanRenderTableColumn('created_at')
-            ->assertCanRenderTableColumn('updated_at');
-    }
-
-    public function testCreate(): void
-    {
-        $data = Post::factory()->makeOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callPageAction(CreateAction::class, [
-                'title' => $data->title,
-                'content' => $data->content,
-                'image' => [$data->image],
-                'draft' => $data->draft,
-            ]);
-
-        self::assertDatabaseHas(Post::class, [
-            'title' => $data->title,
-            'content' => $data->content,
-            'image' => $data->image,
-            'draft' => $data->draft,
-        ]);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testCreateValidation(array $input, array $errors): void
-    {
-        $data = Post::factory()->makeOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    public function testEdit()
-    {
-        $record = Post::factory()->createOne();
-        $data = Post::factory()->makeOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callTableAction(EditAction::class, $record, [
-                'title' => $data->title,
-                'content' => $data->content,
-                'image' => [$data->image],
-                'draft' => $data->draft,
-            ]);
-
-        $record->refresh();
-        self::assertEquals($data->title, $record->title);
-        self::assertEquals($data->content, $record->content);
-        self::assertEquals($data->image, $record->image);
-        self::assertEquals($data->draft, $record->draft);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testEditValidation(array $input, array $errors)
-    {
-        $data = Post::factory()->makeOne();
-        $record = Post::factory()->createOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
-            ->assertHasTableActionErrors($errors);
-    }
-
-    public function testDelete()
-    {
-        $record = Post::factory()->createOne();
-
-        Livewire::test(PostResource\Pages\ManagePosts::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
-    }
-
     public static function provideValidation(): array
     {
         return [
@@ -129,5 +39,116 @@ class PostTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderPage(): void
+    {
+        $this->get(PostResource::getUrl())->assertSuccessful();
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderColumns(): void
+    {
+        $data = Post::factory(10)->create();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->assertCanSeeTableRecords($data)
+            ->assertCanRenderTableColumn('title')
+            ->assertCanRenderTableColumn('user.name')
+            ->assertCanRenderTableColumn('draft')
+            ->assertCanRenderTableColumn('created_at')
+            ->assertCanRenderTableColumn('updated_at');
+    }
+
+    /**
+     * @test
+     */
+    public function create(): void
+    {
+        $data = Post::factory()->makeOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callPageAction(CreateAction::class, [
+                'title' => $data->title,
+                'content' => $data->content,
+                'image' => [$data->image],
+                'draft' => $data->draft,
+            ]);
+
+        self::assertDatabaseHas(Post::class, [
+            'title' => $data->title,
+            'content' => $data->content,
+            'image' => $data->image,
+            'draft' => $data->draft,
+        ]);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Post::factory()->makeOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function edit()
+    {
+        $record = Post::factory()->createOne();
+        $data = Post::factory()->makeOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callTableAction(EditAction::class, $record, [
+                'title' => $data->title,
+                'content' => $data->content,
+                'image' => [$data->image],
+                'draft' => $data->draft,
+            ]);
+
+        $record->refresh();
+        self::assertEquals($data->title, $record->title);
+        self::assertEquals($data->content, $record->content);
+        self::assertEquals($data->image, $record->image);
+        self::assertEquals($data->draft, $record->draft);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function editValidation(array $input, array $errors)
+    {
+        $data = Post::factory()->makeOne();
+        $record = Post::factory()->createOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
+            ->assertHasTableActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function delete()
+    {
+        $record = Post::factory()->createOne();
+
+        Livewire::test(PostResource\Pages\ManagePosts::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
     }
 }

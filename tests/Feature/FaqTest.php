@@ -14,87 +14,6 @@ use Tests\TestCase;
 
 class FaqTest extends TestCase
 {
-    public function testCanRenderPage(): void
-    {
-        $this->get(FaqResource::getUrl())->assertSuccessful();
-    }
-
-    public function testCanRenderColumns(): void
-    {
-        $data = Faq::factory(10)->create();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->assertCanSeeTableRecords($data)
-            ->assertCanRenderTableColumn('question')
-            ->assertCanRenderTableColumn('answer')
-            ->assertCanRenderTableColumn('created_at')
-            ->assertCanRenderTableColumn('updated_at');
-    }
-
-    public function testCreate(): void
-    {
-        $data = Faq::factory()->makeOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callPageAction(CreateAction::class, [
-                'question' => $data->question,
-                'answer' => $data->answer,
-            ]);
-
-        self::assertDatabaseHas(Faq::class, [
-            'question' => $data->question,
-            'answer' => $data->answer,
-        ]);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testCreateValidation(array $input, array $errors): void
-    {
-        $data = Faq::factory()->makeOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
-            ->assertHasPageActionErrors($errors);
-    }
-
-    public function testEdit()
-    {
-        $record = Faq::factory()->createOne();
-        $data = Faq::factory()->makeOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callTableAction(EditAction::class, $record, [
-                'question' => $data->question,
-                'answer' => $data->answer,
-            ]);
-
-        $record->refresh();
-        self::assertEquals($data->question, $record->question);
-        self::assertEquals($data->answer, $record->answer);
-    }
-
-    #[DataProvider(methodName: 'provideValidation')]
-    public function testEditValidation(array $input, array $errors)
-    {
-        $data = Faq::factory()->makeOne();
-        $record = Faq::factory()->createOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
-            ->assertHasTableActionErrors($errors);
-    }
-
-    public function testDelete()
-    {
-        $record = Faq::factory()->createOne();
-
-        Livewire::test(FaqResource\Pages\ManageFaqs::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertHasNoTableActionErrors();
-
-        self::assertModelMissing($record);
-    }
-
     public static function provideValidation(): array
     {
         return [
@@ -117,5 +36,107 @@ class FaqTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderPage(): void
+    {
+        $this->get(FaqResource::getUrl())->assertSuccessful();
+    }
+
+    /**
+     * @test
+     */
+    public function canRenderColumns(): void
+    {
+        $data = Faq::factory(10)->create();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->assertCanSeeTableRecords($data)
+            ->assertCanRenderTableColumn('question')
+            ->assertCanRenderTableColumn('answer')
+            ->assertCanRenderTableColumn('created_at')
+            ->assertCanRenderTableColumn('updated_at');
+    }
+
+    /**
+     * @test
+     */
+    public function create(): void
+    {
+        $data = Faq::factory()->makeOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callPageAction(CreateAction::class, [
+                'question' => $data->question,
+                'answer' => $data->answer,
+            ]);
+
+        self::assertDatabaseHas(Faq::class, [
+            'question' => $data->question,
+            'answer' => $data->answer,
+        ]);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function createValidation(array $input, array $errors): void
+    {
+        $data = Faq::factory()->makeOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
+            ->assertHasPageActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function edit()
+    {
+        $record = Faq::factory()->createOne();
+        $data = Faq::factory()->makeOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callTableAction(EditAction::class, $record, [
+                'question' => $data->question,
+                'answer' => $data->answer,
+            ]);
+
+        $record->refresh();
+        self::assertEquals($data->question, $record->question);
+        self::assertEquals($data->answer, $record->answer);
+    }
+
+    #[DataProvider(methodName: 'provideValidation')]
+    /**
+     * @test
+     */
+    public function editValidation(array $input, array $errors)
+    {
+        $data = Faq::factory()->makeOne();
+        $record = Faq::factory()->createOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
+            ->assertHasTableActionErrors($errors);
+    }
+
+    /**
+     * @test
+     */
+    public function delete()
+    {
+        $record = Faq::factory()->createOne();
+
+        Livewire::test(FaqResource\Pages\ManageFaqs::class)
+            ->callTableAction(DeleteAction::class, $record)
+            ->assertHasNoTableActionErrors();
+
+        self::assertModelMissing($record);
     }
 }

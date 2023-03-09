@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FaqResource\Pages\ManageFaqs;
 use App\Models\Faq;
+use Exception;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -21,7 +22,7 @@ class FaqResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Perguntas Frequentes';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
     public static function form(Form $form): Form
     {
@@ -35,11 +36,15 @@ class FaqResource extends Resource
 
                 MarkdownEditor::make('answer')
                     ->label(__('models.faq.answer'))
+                    ->maxLength(280)
                     ->required()
                     ->columnSpanFull(),
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

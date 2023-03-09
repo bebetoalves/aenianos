@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\LinkResource;
+use App\Filament\Resources\LinkResource\Pages\ManageLinks;
 use App\Models\Link;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -34,7 +35,7 @@ class LinkTest extends TestCase
                     'server_id' => 'required',
                 ],
             ],
-            'max length name' => [
+            'max length' => [
                 'input' => [
                     'name' => Str::random(31),
                 ],
@@ -44,7 +45,7 @@ class LinkTest extends TestCase
             ],
             'valid url' => [
                 'input' => [
-                    'url' => 'google',
+                    'url' => Str::random(),
                 ],
                 'errors' => [
                     'url' => 'url',
@@ -54,7 +55,7 @@ class LinkTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(LinkResource::getUrl())->assertSuccessful();
     }
@@ -64,7 +65,7 @@ class LinkTest extends TestCase
     {
         $data = Link::factory(10)->create();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('name')
             ->assertCanRenderTableColumn('project.title')
@@ -76,16 +77,17 @@ class LinkTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Link::factory()->makeOne();
+        $data = Link::factory()->make();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
                 'url' => $data->url,
                 'project_id' => $data->project_id,
                 'quality' => $data->quality,
                 'server_id' => $data->server_id,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Link::class, [
             'name' => $data->name,
@@ -97,21 +99,23 @@ class LinkTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Link::factory()->createOne();
-        $data = Link::factory()->makeOne();
+        $record = Link::factory()->create();
+        $data = Link::factory()->make();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->callTableAction(EditAction::class, $record, [
                 'name' => $data->name,
                 'url' => $data->url,
                 'project_id' => $data->project_id,
                 'quality' => $data->quality,
                 'server_id' => $data->server_id,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
         self::assertEquals($data->url, $record->url);
         self::assertEquals($data->project_id, $record->project_id);
@@ -120,36 +124,34 @@ class LinkTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Link::factory()->createOne();
+        $record = Link::factory()->create();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
         self::assertModelMissing($record);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Link::factory()->makeOne();
+        $data = Link::factory()->make();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Link::factory()->makeOne();
-        $record = Link::factory()->createOne();
+        $data = Link::factory()->make();
+        $record = Link::factory()->create();
 
-        Livewire::test(LinkResource\Pages\ManageLinks::class)
+        Livewire::test(ManageLinks::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

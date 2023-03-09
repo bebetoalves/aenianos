@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\HighlightResource\Pages\ManageHighlights;
 use App\Models\Highlight;
 use Closure;
+use Exception;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -24,7 +25,7 @@ class HighlightResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Destaques';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-photograph';
 
     public static function form(Form $form): Form
     {
@@ -46,11 +47,14 @@ class HighlightResource extends Resource
 
                 Toggle::make('use_project_cover')
                     ->label(__('models.highlight.use_project_cover'))
-                    ->formatStateUsing(fn (Highlight|null $record) => $record?->cover === null)
+                    ->formatStateUsing(fn (Highlight|null $record) => is_null($record?->cover))
                     ->reactive(),
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

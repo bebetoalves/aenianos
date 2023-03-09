@@ -12,7 +12,7 @@ class Progression extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'media',
         'states',
         'project_id',
     ];

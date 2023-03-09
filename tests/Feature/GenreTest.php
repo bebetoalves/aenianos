@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\GenreResource;
+use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
 use App\Models\Project;
-use Closure;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -20,14 +20,23 @@ class GenreTest extends TestCase
     public static function provideValidation(): array
     {
         return [
-            'required name' => [fn () => '', 'required'],
-            'max length name' => [fn () => Str::random(31), 'max'],
-            'unique name' => [fn () => Genre::factory()->createOne()->name, 'unique'],
+            'required fields' => [
+                'input' => ['name' => null],
+                'errors' => ['name' => 'required'],
+            ],
+            'max length' => [
+                'input' => ['name' => Str::random(31)],
+                'errors' => ['name' => 'max'],
+            ],
+            'unique fields' => [
+                'input' => ['name' => fn () => Genre::factory()->create()->name],
+                'errors' => ['name' => 'unique'],
+            ],
         ];
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(GenreResource::getUrl())->assertSuccessful();
     }
@@ -37,7 +46,7 @@ class GenreTest extends TestCase
     {
         $data = Genre::factory(10)->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('name')
             ->assertCanRenderTableColumn('projects_count')
@@ -48,35 +57,38 @@ class GenreTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Genre::factory()->makeOne();
+        $data = Genre::factory()->make();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Genre::class, ['name' => $data->name]);
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Genre::factory()->createOne();
-        $data = Genre::factory()->makeOne();
+        $record = Genre::factory()->create();
+        $data = Genre::factory()->make();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callTableAction(EditAction::class, $record, ['name' => $data->name]);
+        Livewire::test(ManageGenres::class)
+            ->callTableAction(EditAction::class, $record, ['name' => $data->name])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Genre::factory()->createOne();
+        $record = Genre::factory()->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -84,14 +96,14 @@ class GenreTest extends TestCase
     }
 
     #[Test]
-    public function cannotDeleteIfHasProjects()
+    public function cannotDeleteIfHasProjects(): void
     {
-        $record = Genre::factory()->createOne();
+        $record = Genre::factory()->create();
 
-        $project = Project::factory()->createOne();
-        $project->genres()->attach($record->id);
+        $project = Project::factory()->create();
+        $project->genres()->attach($record->getKey());
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
+        Livewire::test(ManageGenres::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertNotified();
 
@@ -99,28 +111,24 @@ class GenreTest extends TestCase
         self::assertModelExists($project);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(Closure $closure, string $error): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $input = $closure();
+        $input = $this->executeCallables($input);
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callPageAction(CreateAction::class, [
-                'name' => $input,
-            ])
-            ->assertHasPageActionErrors(['name' => $error]);
+        Livewire::test(ManageGenres::class)
+            ->callPageAction(CreateAction::class, $input)
+            ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(Closure $closure, string $error)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $input = $closure();
-        $record = Genre::factory()->createOne();
+        $input = $this->executeCallables($input);
+        $record = Genre::factory()->create();
 
-        Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callTableAction(EditAction::class, $record, ['name' => $input])
-            ->assertHasTableActionErrors(['name' => $error]);
+        Livewire::test(ManageGenres::class)
+            ->callTableAction(EditAction::class, $record, $input)
+            ->assertHasTableActionErrors($errors);
     }
 }

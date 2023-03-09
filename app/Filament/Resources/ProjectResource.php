@@ -8,6 +8,7 @@ use App\Filament\Resources\ProjectResource\Pages\CreateProject;
 use App\Filament\Resources\ProjectResource\Pages\EditProject;
 use App\Filament\Resources\ProjectResource\Pages\ListProjects;
 use App\Models\Project;
+use Exception;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -29,7 +30,7 @@ class ProjectResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Projetos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-film';
 
     public static function form(Form $form): Form
     {
@@ -57,6 +58,7 @@ class ProjectResource extends Resource
 
                         MarkdownEditor::make('synopsis')
                             ->label(__('models.project.synopsis'))
+                            ->maxLength(560)
                             ->required(),
 
                         Grid::make()
@@ -100,6 +102,9 @@ class ProjectResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

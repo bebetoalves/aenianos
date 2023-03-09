@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Notifications\DeletedAborted;
 use App\Filament\Resources\ServerResource\Pages\ManageServers;
 use App\Models\Server;
+use Exception;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -23,7 +24,7 @@ class ServerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Servidores';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-server';
 
     public static function form(Form $form): Form
     {
@@ -44,6 +45,9 @@ class ServerResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

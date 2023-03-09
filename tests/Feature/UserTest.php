@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\Role;
 use App\Filament\Resources\UserResource;
+use App\Filament\Resources\UserResource\Pages\ManageUsers;
 use App\Models\Post;
 use App\Models\User;
 use Filament\Pages\Actions\CreateAction;
@@ -35,12 +36,14 @@ class UserTest extends TestCase
                     'role' => 'required',
                 ],
             ],
-            'max length name' => [
+            'max/min length' => [
                 'input' => [
                     'name' => Str::random(31),
+                    'password' => Str::length(7),
                 ],
                 'errors' => [
                     'name' => 'max',
+                    'password' => 'min',
                 ],
             ],
             'valid email' => [
@@ -51,17 +54,9 @@ class UserTest extends TestCase
                     'email' => 'email',
                 ],
             ],
-            'min length password' => [
+            'unique fields' => [
                 'input' => [
-                    'password' => Str::length(7),
-                ],
-                'errors' => [
-                    'password' => 'min',
-                ],
-            ],
-            'unique email' => [
-                'input' => [
-                    'email' => fn () => User::factory()->createOne()->email,
+                    'email' => fn () => User::factory()->create()->email,
                 ],
                 'errors' => [
                     'email' => 'unique',
@@ -71,7 +66,7 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(UserResource::getUrl())->assertSuccessful();
     }
@@ -81,7 +76,7 @@ class UserTest extends TestCase
     {
         $data = User::all();
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('name')
             ->assertCanRenderTableColumn('role')
@@ -93,16 +88,17 @@ class UserTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = User::factory()->makeOne();
+        $data = User::factory()->make();
         $password = Str::random(8);
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => $password,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(User::class, [
             'name' => $data->name,
@@ -112,21 +108,23 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = User::factory()->createOne();
-        $data = User::factory()->makeOne();
+        $record = User::factory()->create();
+        $data = User::factory()->make();
         $password = Str::random(8);
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callTableAction(EditAction::class, $record, [
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => $password,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
         self::assertEquals($data->email, $record->email);
         self::assertEquals($data->role, $record->role);
@@ -134,19 +132,21 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function editWithoutPassword()
+    public function editWithoutPassword(): void
     {
-        $record = User::factory()->createOne();
-        $data = User::factory()->makeOne();
+        $record = User::factory()->create();
+        $data = User::factory()->make();
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callTableAction(EditAction::class, $record, [
                 'name' => $data->name,
                 'email' => $data->email,
                 'role' => $data->role,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
         self::assertEquals($data->email, $record->email);
         self::assertEquals($data->role, $record->role);
@@ -154,11 +154,11 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = User::factory()->createOne();
+        $record = User::factory()->create();
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -166,12 +166,12 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function cannotDeleteIfHasPosts()
+    public function cannotDeleteIfHasPosts(): void
     {
-        $record = User::factory()->createOne();
-        $post = Post::factory()->createOne(['user_id' => $record->id]);
+        $record = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $record->getKey()]);
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertNotified();
 
@@ -180,49 +180,43 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function cannotDeleteItSelf()
+    public function cannotDeleteItSelf(): void
     {
-        $record = User::factory()->createOne(['role' => Role::ADMIN]);
+        $record = User::factory()->create(['role' => Role::ADMIN]);
         $this->actingAs($record);
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertNotified();
 
         self::assertModelExists($record);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        if (is_callable($input['email'] ?? null)) {
-            $input['email'] = $input['email']();
-        }
+        $data = User::factory()->make();
 
-        $data = User::factory()->makeOne();
+        $input = $this->executeCallables($input);
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        Livewire::test(ManageUsers::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors): void
     {
-        if (is_callable($input['email'] ?? null)) {
-            $input['email'] = $input['email']();
-        }
-
         if ($errors['password'] ?? null === 'required') {
             unset($errors['password']);
         }
 
-        $data = User::factory()->makeOne();
-        $record = User::factory()->createOne();
+        $data = User::factory()->make();
+        $record = User::factory()->create();
 
-        Livewire::test(UserResource\Pages\ManageUsers::class)
+        $input = $this->executeCallables($input);
+
+        Livewire::test(ManageUsers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

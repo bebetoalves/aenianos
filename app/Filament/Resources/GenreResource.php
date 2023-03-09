@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Notifications\DeletedAborted;
 use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
+use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -21,7 +22,7 @@ class GenreResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Gêneros';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
     public static function form(Form $form): Form
     {
@@ -36,6 +37,9 @@ class GenreResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -61,7 +65,7 @@ class GenreResource extends Resource
                 DeleteAction::make()
                     ->before(function (DeleteAction $action, Genre $record) {
                         if ($record->projects()->exists()) {
-                            DeletedAborted::notify('Por favor, apague os projetos associados a este gênero para continuar.');
+                            DeletedAborted::notify('Apague os projetos associados a este gênero para continuar.');
 
                             $action->cancel();
                         }

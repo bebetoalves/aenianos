@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\Quality;
 use App\Filament\Resources\LinkResource\Pages\ManageLinks;
 use App\Models\Link;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -22,7 +23,7 @@ class LinkResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Links';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-link';
 
     public static function form(Form $form): Form
     {
@@ -57,6 +58,9 @@ class LinkResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table

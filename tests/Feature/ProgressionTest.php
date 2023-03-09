@@ -4,10 +4,12 @@ namespace Tests\Feature;
 
 use App\Enums\State;
 use App\Filament\Resources\ProgressionResource;
+use App\Filament\Resources\ProgressionResource\Pages\ManageProgressions;
 use App\Models\Progression;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,27 +22,29 @@ class ProgressionTest extends TestCase
         return [
             'required fields' => [
                 'input' => [
-                    'name' => null,
+                    'media' => null,
                     'states' => null,
                     'project_id' => null,
                 ],
                 'errors' => [
-                    'name' => 'required',
+                    'media' => 'required',
                     'states' => 'required',
                     'project_id' => 'required',
                 ],
             ],
-            'max 5 states' => [
+            'max length' => [
                 'input' => [
+                    'media' => Str::random(),
                     'states' => State::getValues(),
                 ],
                 'errors' => [
+                    'media' => 'max',
                     'states' => 'max',
                 ],
             ],
-            'unique project' => [
+            'unique fields' => [
                 'input' => [
-                    'project_id' => fn () => Progression::factory()->createOne()->project_id,
+                    'project_id' => fn () => Progression::factory()->create()->project_id,
                 ],
                 'errors' => [
                     'project_id' => 'unique',
@@ -50,7 +54,7 @@ class ProgressionTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(ProgressionResource::getUrl())->assertSuccessful();
     }
@@ -60,9 +64,9 @@ class ProgressionTest extends TestCase
     {
         $data = Progression::factory(10)->create();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->assertCanSeeTableRecords($data)
-            ->assertCanRenderTableColumn('name')
+            ->assertCanRenderTableColumn('media')
             ->assertCanRenderTableColumn('project.title')
             ->assertCanRenderTableColumn('states')
             ->assertCanRenderTableColumn('created_at')
@@ -72,48 +76,50 @@ class ProgressionTest extends TestCase
     #[Test]
     public function canCreate(): void
     {
-        $data = Progression::factory()->makeOne();
+        $data = Progression::factory()->make();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callPageAction(CreateAction::class, [
-                'name' => $data->name,
+                'media' => $data->media,
                 'states' => $data->states->toArray(),
                 'project_id' => $data->project_id,
             ])
             ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Progression::class, [
-            'name' => $data->name,
+            'media' => $data->media,
             'states' => json_encode($data->states),
             'project_id' => $data->project_id,
         ]);
     }
 
     #[Test]
-    public function canEdit()
+    public function canEdit(): void
     {
-        $record = Progression::factory()->createOne();
-        $data = Progression::factory()->makeOne();
+        $record = Progression::factory()->create();
+        $data = Progression::factory()->make();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, [
-                'name' => $data->name,
+                'media' => $data->media,
                 'states' => $data->states->toArray(),
                 'project_id' => $data->project_id,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
-        self::assertEquals($data->name, $record->name);
+
+        self::assertEquals($data->media, $record->media);
         self::assertEquals($data->states, $record->states);
         self::assertEquals($data->project_id, $record->project_id);
     }
 
     #[Test]
-    public function canDelete()
+    public function canDelete(): void
     {
-        $record = Progression::factory()->createOne();
+        $record = Progression::factory()->create();
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -122,31 +128,27 @@ class ProgressionTest extends TestCase
 
     #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Progression::factory()->makeOne();
+        $data = Progression::factory()->make();
 
-        if (is_callable($input['project_id'] ?? null)) {
-            $input['project_id'] = $input['project_id']();
-        }
+        $input = $this->executeCallables($input);
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
     #[Test]
     #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    public function canValidateEdit(array $input, array $errors): void
     {
-        $data = Progression::factory()->makeOne();
-        $record = Progression::factory()->createOne();
+        $data = Progression::factory()->make();
+        $record = Progression::factory()->create();
 
-        if (is_callable($input['project_id'] ?? null)) {
-            $input['project_id'] = $input['project_id']();
-        }
+        $input = $this->executeCallables($input);
 
-        Livewire::test(ProgressionResource\Pages\ManageProgressions::class)
+        Livewire::test(ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

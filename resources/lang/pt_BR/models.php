@@ -54,8 +54,8 @@ return [
         'use_project_cover' => 'Usar capa do projeto',
     ],
     'progression' => [
+        'media' => 'Mídia',
         'project' => 'Projeto',
-        'name' => 'Nome',
         'states' => 'Estados',
     ],
     'common' => [

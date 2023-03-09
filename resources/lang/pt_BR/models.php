@@ -53,6 +53,11 @@ return [
         'cover' => 'Capa',
         'use_project_cover' => 'Usar capa do projeto',
     ],
+    'progression' => [
+        'project' => 'Projeto',
+        'name' => 'Nome',
+        'states' => 'Estados',
+    ],
     'common' => [
         'created_at' => 'Data de Criação',
         'updated_at' => 'Última Atualização',

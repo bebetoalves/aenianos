@@ -5,13 +5,16 @@ namespace App\Filament\Resources;
 use App\Enums\Role;
 use App\Filament\Forms\Components\PasswordInput;
 use App\Filament\Notifications\DeletedAborted;
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\Pages\ManageUsers;
 use App\Models\User;
-use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 
 class UserResource extends Resource
 {
@@ -27,12 +30,12 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label(__('models.user.name'))
                     ->maxLength(30)
                     ->required(),
 
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->label(__('models.user.email'))
                     ->email()
                     ->unique(ignoreRecord: true)
@@ -47,7 +50,7 @@ class UserResource extends Resource
                     ->label(__('models.user.password'))
                     ->hiddenOn('create'),
 
-                Forms\Components\Select::make('role')
+                Select::make('role')
                     ->label(__('models.user.role'))
                     ->options(Role::asSelectArray())
                     ->default(Role::MODERATOR)
@@ -59,28 +62,28 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('models.user.name')),
 
-                Tables\Columns\TextColumn::make('role')
+                TextColumn::make('role')
                     ->label(__('models.user.role'))
                     ->getStateUsing(fn (User $record) => $record->role->description),
 
-                Tables\Columns\TextColumn::make('posts_count')
+                TextColumn::make('posts_count')
                     ->label(__('models.user.posts'))
                     ->counts('posts'),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         $password = $data['password'] ?? null;
 
@@ -92,8 +95,8 @@ class UserResource extends Resource
 
                         return array_merge($data, ['password' => bcrypt($password)]);
                     }),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function (Tables\Actions\DeleteAction $action, User $record) {
+                DeleteAction::make()
+                    ->before(function (DeleteAction $action, User $record) {
                         if (auth()->id() === $record->id) {
                             DeletedAborted::notify('Você não pode apagar o seu próprio usuário.');
 
@@ -113,7 +116,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageUsers::route('/'),
+            'index' => ManageUsers::route('/'),
         ];
     }
 }

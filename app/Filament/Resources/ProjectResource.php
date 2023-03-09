@@ -4,13 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Enums\Category;
 use App\Enums\Season;
-use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\ProjectResource\Pages\CreateProject;
+use App\Filament\Resources\ProjectResource\Pages\EditProject;
+use App\Filament\Resources\ProjectResource\Pages\ListProjects;
 use App\Models\Project;
-use Filament\Forms;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 
 class ProjectResource extends Resource
 {
@@ -26,48 +35,48 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Card::make()
                     ->schema([
-                        Forms\Components\Grid::make(3)
+                        Grid::make(3)
                             ->schema([
-                                Forms\Components\TextInput::make('title')
+                                TextInput::make('title')
                                     ->label(__('models.project.title'))
                                     ->maxLength(30)
                                     ->unique(ignoreRecord: true)
                                     ->required(),
 
-                                Forms\Components\TextInput::make('alternative_title')
+                                TextInput::make('alternative_title')
                                     ->label(__('models.project.alternative_title'))
                                     ->maxLength(30),
 
-                                Forms\Components\TextInput::make('episodes')
+                                TextInput::make('episodes')
                                     ->label(__('models.project.episodes'))
                                     ->maxLength(10)
                                     ->required(),
                             ]),
 
-                        Forms\Components\MarkdownEditor::make('synopsis')
+                        MarkdownEditor::make('synopsis')
                             ->label(__('models.project.synopsis'))
                             ->required(),
 
-                        Forms\Components\Grid::make()
+                        Grid::make()
                             ->schema([
-                                Forms\Components\TextInput::make('year')
+                                TextInput::make('year')
                                     ->label(__('models.project.year'))
                                     ->maxLength(4)
                                     ->required(),
 
-                                Forms\Components\Select::make('season')
+                                Select::make('season')
                                     ->label(__('models.project.season'))
                                     ->options(Season::asSelectArray())
                                     ->required(),
 
-                                Forms\Components\Select::make('category')
+                                Select::make('category')
                                     ->label(__('models.project.category'))
                                     ->options(Category::asSelectArray())
                                     ->required(),
 
-                                Forms\Components\Select::make('genres')
+                                Select::make('genres')
                                     ->label(__('models.project.genres'))
                                     ->relationship('genres', 'name')
                                     ->multiple()
@@ -76,14 +85,14 @@ class ProjectResource extends Resource
                             ]),
                     ]),
 
-                Forms\Components\Section::make('Imagens')
+                Section::make('Imagens')
                     ->schema([
-                        Forms\Components\FileUpload::make('miniature')
+                        FileUpload::make('miniature')
                             ->label(__('models.project.miniature'))
                             ->image()
                             ->required(),
 
-                        Forms\Components\FileUpload::make('cover')
+                        FileUpload::make('cover')
                             ->label(__('models.project.cover'))
                             ->image()
                             ->required(),
@@ -95,29 +104,29 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('models.project.title'))
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('links_count')
+                TextColumn::make('links_count')
                     ->label(__('models.project.links'))
                     ->counts('links'),
 
-                Tables\Columns\TextColumn::make('category')
+                TextColumn::make('category')
                     ->label(__('models.project.category'))
                     ->getStateUsing(fn (Project $record) => $record->category->description),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([]);
     }
@@ -130,9 +139,9 @@ class ProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
+            'index' => ListProjects::route('/'),
+            'create' => CreateProject::route('/create'),
+            'edit' => EditProject::route('/{record}/edit'),
         ];
     }
 }

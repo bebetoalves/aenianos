@@ -3,13 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Notifications\DeletedAborted;
-use App\Filament\Resources\GenreResource\Pages;
+use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 
 class GenreResource extends Resource
 {
@@ -25,7 +27,7 @@ class GenreResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label(__('models.genre.name'))
                     ->unique(ignoreRecord: true)
                     ->maxLength(30)
@@ -38,26 +40,26 @@ class GenreResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('models.genre.name')),
 
-                Tables\Columns\TextColumn::make('projects_count')
+                TextColumn::make('projects_count')
                     ->label(__('models.genre.projects'))
                     ->counts('projects'),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function (Tables\Actions\DeleteAction $action, Genre $record) {
+                EditAction::make(),
+                DeleteAction::make()
+                    ->before(function (DeleteAction $action, Genre $record) {
                         if ($record->projects()->exists()) {
                             DeletedAborted::notify('Por favor, apague os projetos associados a este gênero para continuar.');
 
@@ -71,7 +73,7 @@ class GenreResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageGenres::route('/'),
+            'index' => ManageGenres::route('/'),
         ];
     }
 }

@@ -3,13 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Enums\Quality;
-use App\Filament\Resources\LinkResource\Pages;
+use App\Filament\Resources\LinkResource\Pages\ManageLinks;
 use App\Models\Link;
-use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 
 class LinkResource extends Resource
 {
@@ -25,29 +28,29 @@ class LinkResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label(__('models.link.name'))
                     ->maxLength(30)
                     ->required(),
 
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->label(__('models.link.url'))
                     ->url()
                     ->required(),
 
-                Forms\Components\Select::make('project_id')
+                Select::make('project_id')
                     ->label(__('models.link.project'))
                     ->relationship('project', 'title')
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\Select::make('quality')
+                Select::make('quality')
                     ->label(__('models.link.quality'))
                     ->options(Quality::asSelectArray())
                     ->required(),
 
-                Forms\Components\Select::make('server_id')
+                Select::make('server_id')
                     ->label(__('models.link.server'))
                     ->relationship('server', 'name')
                     ->required(),
@@ -58,30 +61,30 @@ class LinkResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('models.link.name'))
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('project.title')
+                TextColumn::make('project.title')
                     ->label(__('models.link.project'))
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('quality')
+                TextColumn::make('quality')
                     ->label(__('models.link.quality'))
                     ->getStateUsing(fn (Link $record) => $record->quality->description),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([]);
     }
@@ -89,7 +92,7 @@ class LinkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageLinks::route('/'),
+            'index' => ManageLinks::route('/'),
         ];
     }
 }

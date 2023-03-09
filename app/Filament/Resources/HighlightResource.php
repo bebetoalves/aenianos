@@ -2,14 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\HighlightResource\Pages;
+use App\Filament\Resources\HighlightResource\Pages\ManageHighlights;
 use App\Models\Highlight;
 use Closure;
-use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 
 class HighlightResource extends Resource
 {
@@ -25,21 +30,21 @@ class HighlightResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('project_id')
+                Select::make('project_id')
                     ->label(__('models.highlight.project'))
                     ->relationship('project', 'title')
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\FileUpload::make('cover')
+                FileUpload::make('cover')
                     ->label(__('models.highlight.cover'))
                     ->image()
                     ->hidden(fn (Closure $get): bool => $get('use_project_cover'))
                     ->required(fn (Closure $get): bool => ! $get('use_project_cover'))
                     ->columnSpanFull(),
 
-                Forms\Components\Toggle::make('use_project_cover')
+                Toggle::make('use_project_cover')
                     ->label(__('models.highlight.use_project_cover'))
                     ->formatStateUsing(fn (Highlight|null $record) => $record?->cover === null)
                     ->reactive(),
@@ -50,24 +55,24 @@ class HighlightResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('project.title')
+                TextColumn::make('project.title')
                     ->label(__('models.highlight.project')),
 
-                Tables\Columns\ImageColumn::make('cover')
+                ImageColumn::make('cover')
                     ->label(__('models.highlight.cover'))
                     ->getStateUsing(fn (Highlight $record) => $record->cover()),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))
                     ->date(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('models.common.updated_at'))
                     ->date(),
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         if ($data['use_project_cover']) {
                             $data['cover'] = null;
@@ -75,7 +80,7 @@ class HighlightResource extends Resource
 
                         return $data;
                     }),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([]);
     }
@@ -83,7 +88,7 @@ class HighlightResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageHighlights::route('/'),
+            'index' => ManageHighlights::route('/'),
         ];
     }
 }

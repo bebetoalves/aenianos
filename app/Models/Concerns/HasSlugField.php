@@ -2,11 +2,12 @@
 
 namespace App\Models\Concerns;
 
+use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-trait HasSlug
+trait HasSlugField
 {
-    use \Spatie\Sluggable\HasSlug;
+    use HasSlug;
 
     private string $databaseSlugField = 'slug';
 

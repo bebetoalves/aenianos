@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\ServerResource;
+use App\Filament\Resources\ServerResource\Pages\ManageServers;
 use App\Models\Link;
 use App\Models\Server;
 use Filament\Pages\Actions\CreateAction;
@@ -29,19 +30,17 @@ class ServerTest extends TestCase
                     'icon' => 'required',
                 ],
             ],
-            'max length name' => [
+            'max length' => [
                 'input' => [
                     'name' => Str::random(31),
-                    'icon' => [placekitten(1280, 720)],
                 ],
                 'errors' => [
                     'name' => 'max',
                 ],
             ],
-            'unique name' => [
+            'unique fields' => [
                 'input' => [
                     'name' => fn () => Server::factory()->createOne()->name,
-                    'icon' => [placekitten(32, 32)],
                 ],
                 'errors' => [
                     'name' => 'unique',
@@ -51,7 +50,7 @@ class ServerTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(ServerResource::getUrl())->assertSuccessful();
     }
@@ -61,7 +60,7 @@ class ServerTest extends TestCase
     {
         $data = Server::factory(10)->create();
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->assertCanSeeTableRecords($data)
             ->assertCanRenderTableColumn('name')
             ->assertCanRenderTableColumn('links_count')
@@ -75,11 +74,12 @@ class ServerTest extends TestCase
     {
         $data = Server::factory()->makeOne();
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
                 'icon' => [$data->icon],
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Server::class, [
             'name' => $data->name,
@@ -93,11 +93,12 @@ class ServerTest extends TestCase
         $record = Server::factory()->createOne();
         $data = Server::factory()->makeOne();
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->callTableAction(EditAction::class, $record, [
                 'name' => $data->name,
                 'icon' => [$data->icon],
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
         self::assertEquals($data->name, $record->name);
@@ -109,7 +110,7 @@ class ServerTest extends TestCase
     {
         $record = Server::factory()->createOne();
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertHasNoTableActionErrors();
 
@@ -122,7 +123,7 @@ class ServerTest extends TestCase
         $record = Server::factory()->createOne();
         $link = Link::factory()->createOne(['server_id' => $record->id]);
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->callTableAction(DeleteAction::class, $record)
             ->assertNotified();
 
@@ -130,33 +131,26 @@ class ServerTest extends TestCase
         self::assertModelExists($link);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        if (is_callable($input['name'])) {
-            $input['name'] = $input['name']();
-        }
+        $data = Server::factory()->makeOne(['icon' => [placekitten(32, 32)]]);
+        $input = $this->executeCallables($input);
 
-        $data = Server::factory()->makeOne();
-
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        Livewire::test(ManageServers::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
-        if (is_callable($input['name'])) {
-            $input['name'] = $input['name']();
-        }
-
-        $data = Server::factory()->makeOne();
+        $data = Server::factory()->makeOne(['icon' => [placekitten(32, 32)]]);
         $record = Server::factory()->createOne();
 
-        Livewire::test(ServerResource\Pages\ManageServers::class)
+        $input = $this->executeCallables($input);
+
+        Livewire::test(ManageServers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))
             ->assertHasTableActionErrors($errors);
     }

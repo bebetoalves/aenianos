@@ -23,7 +23,7 @@ class ServerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Servidores';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-server';
 
     public static function form(Form $form): Form
     {

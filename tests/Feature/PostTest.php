@@ -30,10 +30,9 @@ class PostTest extends TestCase
                     'image' => 'required',
                 ],
             ],
-            'max length title' => [
+            'max length' => [
                 'input' => [
                     'title' => Str::random(101),
-                    'image' => [placekitten(1280, 720)],
                 ],
                 'errors' => [
                     'title' => 'max',
@@ -43,7 +42,7 @@ class PostTest extends TestCase
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(PostResource::getUrl())->assertSuccessful();
     }
@@ -73,7 +72,8 @@ class PostTest extends TestCase
                 'content' => $data->content,
                 'image' => [$data->image],
                 'draft' => $data->draft,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Post::class, [
             'title' => $data->title,
@@ -95,9 +95,11 @@ class PostTest extends TestCase
                 'content' => $data->content,
                 'image' => [$data->image],
                 'draft' => $data->draft,
-            ]);
+            ])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->title, $record->title);
         self::assertEquals($data->content, $record->content);
         self::assertEquals($data->image, $record->image);
@@ -116,22 +118,20 @@ class PostTest extends TestCase
         self::assertModelMissing($record);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(array $input, array $errors): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $data = Post::factory()->makeOne();
+        $data = Post::factory()->makeOne(['image' => [placekitten(1280, 720)]]);
 
         Livewire::test(PostResource\Pages\ManagePosts::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
             ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(array $input, array $errors)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
-        $data = Post::factory()->makeOne();
+        $data = Post::factory()->makeOne(['image' => [placekitten(1280, 720)]]);
         $record = Post::factory()->createOne();
 
         Livewire::test(PostResource\Pages\ManagePosts::class)

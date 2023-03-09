@@ -24,7 +24,7 @@ class PostResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Postagens';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
     public static function form(Form $form): Form
     {

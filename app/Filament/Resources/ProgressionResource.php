@@ -23,14 +23,15 @@ class ProgressionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Progressos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('models.progression.name'))
+                TextInput::make('media')
+                    ->label(__('models.progression.media'))
+                    ->maxLength(15)
                     ->required(),
 
                 Select::make('project_id')
@@ -54,8 +55,8 @@ class ProgressionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label(__('models.progression.name')),
+                TextColumn::make('media')
+                    ->label(__('models.progression.media')),
 
                 TextColumn::make('project.title')
                     ->label(__('models.progression.project')),

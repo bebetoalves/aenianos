@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Filament\Resources\GenreResource;
 use App\Models\Genre;
 use App\Models\Project;
-use Closure;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -20,14 +19,23 @@ class GenreTest extends TestCase
     public static function provideValidation(): array
     {
         return [
-            'required name' => [fn () => '', 'required'],
-            'max length name' => [fn () => Str::random(31), 'max'],
-            'unique name' => [fn () => Genre::factory()->createOne()->name, 'unique'],
+            'required fields' => [
+                'input' => ['name' => null],
+                'errors' => ['name' => 'required'],
+            ],
+            'max length' => [
+                'input' => ['name' => Str::random(31)],
+                'errors' => ['name' => 'max'],
+            ],
+            'unique fields' => [
+                'input' => ['name' => fn () => Genre::factory()->createOne()->name],
+                'errors' => ['name' => 'unique'],
+            ],
         ];
     }
 
     #[Test]
-    public function canRenderPage(): void
+    public function canRenderList(): void
     {
         $this->get(GenreResource::getUrl())->assertSuccessful();
     }
@@ -53,7 +61,8 @@ class GenreTest extends TestCase
         Livewire::test(GenreResource\Pages\ManageGenres::class)
             ->callPageAction(CreateAction::class, [
                 'name' => $data->name,
-            ]);
+            ])
+            ->assertHasNoPageActionErrors();
 
         self::assertDatabaseHas(Genre::class, ['name' => $data->name]);
     }
@@ -65,9 +74,11 @@ class GenreTest extends TestCase
         $data = Genre::factory()->makeOne();
 
         Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callTableAction(EditAction::class, $record, ['name' => $data->name]);
+            ->callTableAction(EditAction::class, $record, ['name' => $data->name])
+            ->assertHasNoTableActionErrors();
 
         $record->refresh();
+
         self::assertEquals($data->name, $record->name);
     }
 
@@ -89,7 +100,7 @@ class GenreTest extends TestCase
         $record = Genre::factory()->createOne();
 
         $project = Project::factory()->createOne();
-        $project->genres()->attach($record->id);
+        $project->genres()->attach($record->getKey());
 
         Livewire::test(GenreResource\Pages\ManageGenres::class)
             ->callTableAction(DeleteAction::class, $record)
@@ -99,28 +110,24 @@ class GenreTest extends TestCase
         self::assertModelExists($project);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function createValidation(Closure $closure, string $error): void
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateCreate(array $input, array $errors): void
     {
-        $input = $closure();
+        $input = $this->executeCallables($input);
 
         Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callPageAction(CreateAction::class, [
-                'name' => $input,
-            ])
-            ->assertHasPageActionErrors(['name' => $error]);
+            ->callPageAction(CreateAction::class, $input)
+            ->assertHasPageActionErrors($errors);
     }
 
-    #[Test]
-    #[DataProvider(methodName: 'provideValidation')]
-    public function editValidation(Closure $closure, string $error)
+    #[Test, DataProvider(methodName: 'provideValidation')]
+    public function canValidateEdit(array $input, array $errors)
     {
-        $input = $closure();
+        $input = $this->executeCallables($input);
         $record = Genre::factory()->createOne();
 
         Livewire::test(GenreResource\Pages\ManageGenres::class)
-            ->callTableAction(EditAction::class, $record, ['name' => $input])
-            ->assertHasTableActionErrors(['name' => $error]);
+            ->callTableAction(EditAction::class, $record, $input)
+            ->assertHasTableActionErrors($errors);
     }
 }

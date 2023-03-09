@@ -21,4 +21,15 @@ abstract class TestCase extends BaseTestCase
 
         $this->actingAs($user);
     }
+
+    public function executeCallables(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_callable($value)) {
+                $data[$key] = $value();
+            }
+        }
+
+        return $data;
+    }
 }

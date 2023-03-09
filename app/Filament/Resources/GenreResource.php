@@ -21,7 +21,7 @@ class GenreResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Gêneros';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
     public static function form(Form $form): Form
     {
@@ -61,7 +61,7 @@ class GenreResource extends Resource
                 DeleteAction::make()
                     ->before(function (DeleteAction $action, Genre $record) {
                         if ($record->projects()->exists()) {
-                            DeletedAborted::notify('Por favor, apague os projetos associados a este gênero para continuar.');
+                            DeletedAborted::notify('Apague os projetos associados a este gênero para continuar.');
 
                             $action->cancel();
                         }

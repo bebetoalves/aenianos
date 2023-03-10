@@ -86,6 +86,15 @@ class UserTest extends TestCase
     }
 
     #[Test]
+    public function moderatorCantSeePage()
+    {
+        $user = User::factory()->create(['role' => Role::MODERATOR]);
+        $this->actingAs($user);
+
+        $this->get(UserResource::class)->assertNotFound();
+    }
+
+    #[Test]
     public function canCreate(): void
     {
         $data = User::factory()->make();

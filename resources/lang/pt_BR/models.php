@@ -40,7 +40,7 @@ return [
     ],
     'project' => [
         'title' => 'Título',
-        'alternative_title' => 'Título Alternativo',
+        'alternative_title' => 'Título alternativo',
         'synopsis' => 'Sinopse',
         'episodes' => 'Episódios',
         'year' => 'Ano',

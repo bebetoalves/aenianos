@@ -52,6 +52,11 @@ class Project extends Model
         return $this->hasOne(Progression::class);
     }
 
+    public function relatedProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'related_project', 'project_id', 'related_project_id');
+    }
+
     protected function defineSluggableField(): string
     {
         return 'title';

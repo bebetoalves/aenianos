@@ -63,6 +63,7 @@ class ProjectTest extends TestCase
                     'synopsis' => Str::random(561),
                     'year' => Str::random(5),
                     'genres' => fn () => Genre::factory(4)->create()->pluck('id')->toArray(),
+                    'related_project' => Project::factory(6)->create()->pluck('id')->toArray(),
                 ],
                 'errors' => [
                     'title' => 'max',
@@ -71,6 +72,7 @@ class ProjectTest extends TestCase
                     'synopsis' => 'max',
                     'year' => 'max',
                     'genres' => 'max',
+                    'related_project' => 'max',
                 ],
             ],
             'unique fields' => [
@@ -115,6 +117,7 @@ class ProjectTest extends TestCase
     {
         $data = Project::factory()->make();
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
+        $relatedProjects = Project::factory(5)->create()->pluck('id')->toArray();
 
         Livewire::test(CreateProject::class)
             ->fillForm([
@@ -128,6 +131,7 @@ class ProjectTest extends TestCase
                 'miniature' => $this->uploadedFile,
                 'cover' => $this->uploadedFile,
                 'genres' => $genres,
+                'related_project' => $relatedProjects,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -157,7 +161,9 @@ class ProjectTest extends TestCase
     {
         $record = Project::factory()->create();
         $data = Project::factory()->make();
+
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
+        $relatedProjects = Project::factory(5)->create()->pluck('id')->toArray();
 
         Livewire::test(EditProject::class, ['record' => $record->slug])
             ->fillForm([
@@ -171,6 +177,7 @@ class ProjectTest extends TestCase
                 'miniature' => $this->uploadedFile,
                 'cover' => $this->uploadedFile,
                 'genres' => $genres,
+                'related_project' => $relatedProjects,
             ])
             ->call('save')
             ->assertHasNoFormErrors();

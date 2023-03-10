@@ -50,6 +50,7 @@ return [
         'cover' => 'Capa',
         'links' => 'Links',
         'genres' => 'Gêneros',
+        'related_project' => 'Projetos relacionados',
     ],
     'highlight' => [
         'project' => 'Projeto',

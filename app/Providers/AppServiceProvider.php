@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Filament\Pages\Profile;
 use Filament\Facades\Filament;
+use Filament\Navigation\UserMenuItem;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Filament::serving(fn () => Filament::registerViteTheme('resources/css/filament.css'));
+        Filament::serving(function () {
+            Filament::registerViteTheme('resources/css/filament.css');
+
+            Filament::registerUserMenuItems([
+                UserMenuItem::make()
+                    ->label(__('pages.profile.title'))
+                    ->url(Profile::getUrl())
+                    ->icon('heroicon-s-user'),
+            ]);
+        });
     }
 }

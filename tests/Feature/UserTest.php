@@ -68,7 +68,7 @@ class UserTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(UserResource::getUrl())->assertSuccessful();
+        self::get(UserResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -89,9 +89,9 @@ class UserTest extends TestCase
     public function moderatorCantSeePage()
     {
         $user = User::factory()->create(['role' => Role::MODERATOR]);
-        $this->actingAs($user);
+        self::actingAs($user);
 
-        $this->get(UserResource::class)->assertNotFound();
+        self::get(UserResource::class)->assertNotFound();
     }
 
     #[Test]
@@ -192,7 +192,7 @@ class UserTest extends TestCase
     public function cannotDeleteItSelf(): void
     {
         $record = User::factory()->create(['role' => Role::ADMIN]);
-        $this->actingAs($record);
+        self::actingAs($record);
 
         Livewire::test(ManageUsers::class)
             ->callTableAction(DeleteAction::class, $record)
@@ -206,7 +206,7 @@ class UserTest extends TestCase
     {
         $data = User::factory()->make();
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageUsers::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
@@ -223,7 +223,7 @@ class UserTest extends TestCase
         $data = User::factory()->make();
         $record = User::factory()->create();
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageUsers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))

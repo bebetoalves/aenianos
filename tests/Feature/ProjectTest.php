@@ -89,7 +89,7 @@ class ProjectTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(ProjectResource::getUrl())->assertSuccessful();
+        self::get(ProjectResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -109,7 +109,7 @@ class ProjectTest extends TestCase
     #[Test]
     public function canRenderCreate(): void
     {
-        $this->get(ProjectResource::getUrl('create'))->assertSuccessful();
+        self::get(ProjectResource::getUrl('create'))->assertSuccessful();
     }
 
     #[Test]
@@ -152,7 +152,7 @@ class ProjectTest extends TestCase
     {
         $data = Project::factory()->create();
 
-        $this->get(ProjectResource::getUrl('edit', ['record' => $data]))
+        self::get(ProjectResource::getUrl('edit', ['record' => $data]))
             ->assertSuccessful();
     }
 
@@ -212,7 +212,7 @@ class ProjectTest extends TestCase
             'cover' => $this->uploadedFile,
         ]);
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(CreateProject::class)
             ->fillForm(array_merge($data->toArray(), $input))
@@ -229,7 +229,7 @@ class ProjectTest extends TestCase
                 'cover' => $this->uploadedFile,
             ]);
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
         $record = Project::factory()->create();
 
         Livewire::test(EditProject::class, ['record' => $record->slug])

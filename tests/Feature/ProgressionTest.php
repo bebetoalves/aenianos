@@ -56,7 +56,7 @@ class ProgressionTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(ProgressionResource::getUrl())->assertSuccessful();
+        self::get(ProgressionResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -132,7 +132,7 @@ class ProgressionTest extends TestCase
     {
         $data = Progression::factory()->make();
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageProgressions::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
@@ -146,7 +146,7 @@ class ProgressionTest extends TestCase
         $data = Progression::factory()->make();
         $record = Progression::factory()->create();
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageProgressions::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))

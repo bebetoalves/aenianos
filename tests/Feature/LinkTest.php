@@ -57,7 +57,7 @@ class LinkTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(LinkResource::getUrl())->assertSuccessful();
+        self::get(LinkResource::getUrl())->assertSuccessful();
     }
 
     #[Test]

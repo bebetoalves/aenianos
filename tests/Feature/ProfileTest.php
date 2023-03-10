@@ -87,14 +87,14 @@ class ProfileTest extends TestCase
     #[Test]
     public function canRenderPage()
     {
-        $this->get(Profile::getUrl())->assertSuccessful();
+        self::get(Profile::getUrl())->assertSuccessful();
     }
 
     #[Test]
     public function canChangeGeneral()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        self::actingAs($user);
 
         $name = $this->faker->name();
         $email = $this->faker->valid()->email();
@@ -117,7 +117,7 @@ class ProfileTest extends TestCase
     public function canChangePassword()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        self::actingAs($user);
 
         Livewire::test(Profile::class)
             ->fillForm([
@@ -137,9 +137,9 @@ class ProfileTest extends TestCase
     public function canValidate(array $input, array $errors)
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        self::actingAs($user);
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(Profile::class)
             ->fillForm($input)

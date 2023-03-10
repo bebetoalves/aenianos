@@ -45,7 +45,7 @@ class FaqTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(FaqResource::getUrl())->assertSuccessful();
+        self::get(FaqResource::getUrl())->assertSuccessful();
     }
 
     #[Test]

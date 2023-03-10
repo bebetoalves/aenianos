@@ -45,7 +45,7 @@ class PostTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(PostResource::getUrl())->assertSuccessful();
+        self::get(PostResource::getUrl())->assertSuccessful();
     }
 
     #[Test]

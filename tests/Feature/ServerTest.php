@@ -52,7 +52,7 @@ class ServerTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(ServerResource::getUrl())->assertSuccessful();
+        self::get(ServerResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -135,7 +135,7 @@ class ServerTest extends TestCase
     public function canValidateCreate(array $input, array $errors): void
     {
         $data = Server::factory()->make(['icon' => [placekitten(32, 32)]]);
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageServers::class)
             ->callPageAction(CreateAction::class, array_merge($data->toArray(), $input))
@@ -148,7 +148,7 @@ class ServerTest extends TestCase
         $data = Server::factory()->make(['icon' => [placekitten(32, 32)]]);
         $record = Server::factory()->create();
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageServers::class)
             ->callTableAction(EditAction::class, $record, array_merge($data->toArray(), $input))

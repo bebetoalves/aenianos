@@ -63,7 +63,7 @@ class ProjectResource extends Resource
                             ->maxLength(560)
                             ->required(),
 
-                        Grid::make()
+                        Grid::make(3)
                             ->schema([
                                 TextInput::make('year')
                                     ->label(__('models.project.year'))
@@ -79,13 +79,23 @@ class ProjectResource extends Resource
                                     ->label(__('models.project.category'))
                                     ->options(Category::asSelectArray())
                                     ->required(),
+                            ]),
 
+                        Grid::make()
+                            ->schema([
                                 Select::make('genres')
                                     ->label(__('models.project.genres'))
                                     ->relationship('genres', 'name')
                                     ->multiple()
                                     ->maxItems(3)
                                     ->required(),
+
+                                Select::make('related_project')
+                                    ->label(__('models.project.related_project'))
+                                    ->relationship('relatedProjects', 'title')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->maxItems(5),
                             ]),
                     ]),
 

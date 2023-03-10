@@ -63,6 +63,7 @@ class ProjectTest extends TestCase
                     'synopsis' => Str::random(561),
                     'year' => Str::random(5),
                     'genres' => fn () => Genre::factory(4)->create()->pluck('id')->toArray(),
+                    'related_project' => fn () => Project::factory(6)->create()->pluck('id')->toArray(),
                 ],
                 'errors' => [
                     'title' => 'max',
@@ -71,6 +72,7 @@ class ProjectTest extends TestCase
                     'synopsis' => 'max',
                     'year' => 'max',
                     'genres' => 'max',
+                    'related_project' => 'max',
                 ],
             ],
             'unique fields' => [
@@ -87,7 +89,7 @@ class ProjectTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(ProjectResource::getUrl())->assertSuccessful();
+        self::get(ProjectResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -107,7 +109,7 @@ class ProjectTest extends TestCase
     #[Test]
     public function canRenderCreate(): void
     {
-        $this->get(ProjectResource::getUrl('create'))->assertSuccessful();
+        self::get(ProjectResource::getUrl('create'))->assertSuccessful();
     }
 
     #[Test]
@@ -115,6 +117,7 @@ class ProjectTest extends TestCase
     {
         $data = Project::factory()->make();
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
+        $relatedProjects = Project::factory(5)->create()->pluck('id')->toArray();
 
         Livewire::test(CreateProject::class)
             ->fillForm([
@@ -128,6 +131,7 @@ class ProjectTest extends TestCase
                 'miniature' => $this->uploadedFile,
                 'cover' => $this->uploadedFile,
                 'genres' => $genres,
+                'related_project' => $relatedProjects,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -148,7 +152,7 @@ class ProjectTest extends TestCase
     {
         $data = Project::factory()->create();
 
-        $this->get(ProjectResource::getUrl('edit', ['record' => $data]))
+        self::get(ProjectResource::getUrl('edit', ['record' => $data]))
             ->assertSuccessful();
     }
 
@@ -157,7 +161,9 @@ class ProjectTest extends TestCase
     {
         $record = Project::factory()->create();
         $data = Project::factory()->make();
+
         $genres = Genre::factory(3)->create()->pluck('id')->toArray();
+        $relatedProjects = Project::factory(5)->create()->pluck('id')->toArray();
 
         Livewire::test(EditProject::class, ['record' => $record->slug])
             ->fillForm([
@@ -171,6 +177,7 @@ class ProjectTest extends TestCase
                 'miniature' => $this->uploadedFile,
                 'cover' => $this->uploadedFile,
                 'genres' => $genres,
+                'related_project' => $relatedProjects,
             ])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -205,7 +212,7 @@ class ProjectTest extends TestCase
             'cover' => $this->uploadedFile,
         ]);
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(CreateProject::class)
             ->fillForm(array_merge($data->toArray(), $input))
@@ -222,7 +229,7 @@ class ProjectTest extends TestCase
                 'cover' => $this->uploadedFile,
             ]);
 
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
         $record = Project::factory()->create();
 
         Livewire::test(EditProject::class, ['record' => $record->slug])

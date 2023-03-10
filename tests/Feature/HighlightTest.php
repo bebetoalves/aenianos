@@ -42,7 +42,7 @@ class HighlightTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(HighlightResource::getUrl())->assertSuccessful();
+        self::get(HighlightResource::getUrl())->assertSuccessful();
     }
 
     #[Test]

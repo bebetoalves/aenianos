@@ -30,8 +30,10 @@ class DatabaseSeeder extends Seeder
 
         Project::factory(50)->create()->each(function (Project $project) {
             $genres = Genre::all()->random(rand(0, 3))->pluck('id')->toArray();
+            $relatedProject = Project::all()->random(rand(0, 5))->pluck('id')->toArray();
 
             $project->genres()->attach($genres);
+            $project->relatedProjects()->attach($relatedProject);
         });
 
         Server::factory(10)->create();

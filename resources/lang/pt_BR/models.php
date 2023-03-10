@@ -25,6 +25,9 @@ return [
         'name' => 'Nome',
         'email' => 'E-mail',
         'password' => 'Senha',
+        'new_password' => 'Nova senha',
+        'current_password' => 'Senha atual',
+        'password_confirmation' => 'Confirmar senha',
         'role' => 'Cargo',
         'posts' => 'Postagens',
     ],
@@ -37,7 +40,7 @@ return [
     ],
     'project' => [
         'title' => 'Título',
-        'alternative_title' => 'Título Alternativo',
+        'alternative_title' => 'Título alternativo',
         'synopsis' => 'Sinopse',
         'episodes' => 'Episódios',
         'year' => 'Ano',
@@ -47,6 +50,7 @@ return [
         'cover' => 'Capa',
         'links' => 'Links',
         'genres' => 'Gêneros',
+        'related_project' => 'Projetos relacionados',
     ],
     'highlight' => [
         'project' => 'Projeto',

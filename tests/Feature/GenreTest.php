@@ -38,7 +38,7 @@ class GenreTest extends TestCase
     #[Test]
     public function canRenderList(): void
     {
-        $this->get(GenreResource::getUrl())->assertSuccessful();
+        self::get(GenreResource::getUrl())->assertSuccessful();
     }
 
     #[Test]
@@ -114,7 +114,7 @@ class GenreTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
 
         Livewire::test(ManageGenres::class)
             ->callPageAction(CreateAction::class, $input)
@@ -124,7 +124,7 @@ class GenreTest extends TestCase
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateEdit(array $input, array $errors): void
     {
-        $input = $this->executeCallables($input);
+        $input = self::executeCallables($input);
         $record = Genre::factory()->create();
 
         Livewire::test(ManageGenres::class)

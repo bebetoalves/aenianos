@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class UserResource extends Resource
@@ -75,9 +76,11 @@ class UserResource extends Resource
                     ->label(__('models.user.role'))
                     ->getStateUsing(fn (User $record) => $record->role->description),
 
-                TextColumn::make('posts_count')
+                BadgeColumn::make('posts_count')
                     ->label(__('models.user.posts'))
-                    ->counts('posts'),
+                    ->counts('posts')
+                    ->color('primary')
+                    ->icon('heroicon-o-newspaper'),
 
                 TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))

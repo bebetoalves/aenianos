@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -57,9 +58,11 @@ class ServerResource extends Resource
                 TextColumn::make('name')
                     ->label(__('models.server.name')),
 
-                TextColumn::make('links_count')
+                BadgeColumn::make('links_count')
                     ->label(__('models.server.links'))
-                    ->counts('links'),
+                    ->counts('links')
+                    ->color('primary')
+                    ->icon('heroicon-o-link'),
 
                 ImageColumn::make('icon')
                     ->label(__('models.server.icon'))

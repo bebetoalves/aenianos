@@ -20,6 +20,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class ProjectResource extends Resource
@@ -125,9 +126,11 @@ class ProjectResource extends Resource
                     ->label(__('models.project.title'))
                     ->limit(30),
 
-                TextColumn::make('links_count')
+                BadgeColumn::make('links_count')
                     ->label(__('models.project.links'))
-                    ->counts('links'),
+                    ->counts('links')
+                    ->color('primary')
+                    ->icon('heroicon-o-link'),
 
                 TextColumn::make('category')
                     ->label(__('models.project.category'))

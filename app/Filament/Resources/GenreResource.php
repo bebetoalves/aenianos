@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class GenreResource extends Resource
@@ -48,9 +49,11 @@ class GenreResource extends Resource
                 TextColumn::make('name')
                     ->label(__('models.genre.name')),
 
-                TextColumn::make('projects_count')
+                BadgeColumn::make('projects_count')
                     ->label(__('models.genre.projects'))
-                    ->counts('projects'),
+                    ->counts('projects')
+                    ->color('primary')
+                    ->icon('heroicon-o-film'),
 
                 TextColumn::make('created_at')
                     ->label(__('models.common.created_at'))

@@ -15,6 +15,7 @@ class LinkFactory extends Factory
             'name' => sprintf('Episode %d', fake()->randomNumber(nbDigits: 2)),
             'url' => fake()->url(),
             'quality' => Quality::getRandomValue(),
+            'active' => fake()->boolean(),
             'project_id' => Project::factory(),
             'server_id' => Server::factory(),
         ];

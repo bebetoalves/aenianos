@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Link;
 use App\Models\Post;
 use App\Models\Project;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -14,6 +15,8 @@ class StatsOverview extends BaseWidget
         return [
             Card::make('Projetos', Project::count()),
             Card::make('Postagens', Post::count()),
+            Card::make('Links Ativos', Link::where(['active' => true])->count()),
+            Card::make('Links Quebrados', Link::where(['active' => false])->count()),
         ];
     }
 }

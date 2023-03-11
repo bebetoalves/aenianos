@@ -15,6 +15,7 @@ class Link extends Model
         'name',
         'url',
         'quality',
+        'active',
         'project_id',
         'server_id',
     ];

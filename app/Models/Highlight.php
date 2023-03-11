@@ -15,13 +15,13 @@ class Highlight extends Model
         'project_id',
     ];
 
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
-
     public function cover(): string
     {
         return $this->cover ?? $this->project->cover;
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 }

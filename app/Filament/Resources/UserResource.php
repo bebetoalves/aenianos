@@ -110,7 +110,7 @@ class UserResource extends Resource
                         }
 
                         if ($record->posts()->exists()) {
-                            DeletedAborted::notify('Apague as postagens associadas a este usuário para continuar.');
+                            DeletedAborted::notify('Apague as postagens associadas a esse usuário para continuar.');
 
                             $action->cancel();
                         }

@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Filament\Resources\GenreResource;
 use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
-use App\Models\Project;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -93,22 +92,6 @@ class GenreTest extends TestCase
             ->assertHasNoTableActionErrors();
 
         self::assertModelMissing($record);
-    }
-
-    #[Test]
-    public function cannotDeleteIfHasProjects(): void
-    {
-        $record = Genre::factory()->create();
-
-        $project = Project::factory()->create();
-        $project->genres()->attach($record->getKey());
-
-        Livewire::test(ManageGenres::class)
-            ->callTableAction(DeleteAction::class, $record)
-            ->assertNotified();
-
-        self::assertModelExists($record);
-        self::assertModelExists($project);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]

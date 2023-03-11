@@ -80,7 +80,7 @@ class ServerResource extends Resource
                 DeleteAction::make()
                     ->before(function (DeleteAction $action, Server $record) {
                         if ($record->links()->exists()) {
-                            DeletedAborted::notify('Por favor, apague os links associados a este servidor para continuar.');
+                            DeletedAborted::notify('Apague os links associados a esse servidor para continuar.');
 
                             $action->cancel();
                         }

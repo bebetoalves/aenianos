@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Notifications\DeletedAborted;
 use App\Filament\Resources\GenreResource\Pages\ManageGenres;
 use App\Models\Genre;
 use Exception;
@@ -64,14 +63,7 @@ class GenreResource extends Resource
             ->filters([])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make()
-                    ->before(function (DeleteAction $action, Genre $record) {
-                        if ($record->projects()->exists()) {
-                            DeletedAborted::notify('Apague os projetos associados a este gênero para continuar.');
-
-                            $action->cancel();
-                        }
-                    }),
+                DeleteAction::make(),
             ])
             ->bulkActions([]);
     }

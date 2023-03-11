@@ -9,7 +9,7 @@ class FaqFactory extends Factory
     public function definition(): array
     {
         return [
-            'question' => fake()->sentence(),
+            'question' => fake()->sentence(nbWords: 3),
             'answer' => fake()->realText(),
         ];
     }

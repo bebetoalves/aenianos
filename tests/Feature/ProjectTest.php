@@ -7,6 +7,9 @@ use App\Filament\Resources\ProjectResource\Pages\CreateProject;
 use App\Filament\Resources\ProjectResource\Pages\EditProject;
 use App\Filament\Resources\ProjectResource\Pages\ListProjects;
 use App\Models\Genre;
+use App\Models\Highlight;
+use App\Models\Link;
+use App\Models\Progression;
 use App\Models\Project;
 use Filament\Pages\Actions\DeleteAction;
 use Illuminate\Http\Testing\File;
@@ -198,10 +201,20 @@ class ProjectTest extends TestCase
     {
         $record = Project::factory()->create();
 
+        $link = Link::factory()->create(['project_id' => $record->getKey()]);
+        $highlight = Highlight::factory()->create(['project_id' => $record->getKey()]);
+        $progression = Progression::factory()->create(['project_id' => $record->getKey()]);
+        $genre = Genre::factory()->create();
+        $record->genres()->attach($genre->getKey());
+
         Livewire::test(EditProject::class, ['record' => $record->slug])
             ->callPageAction(DeleteAction::class);
 
         self::assertModelMissing($record);
+        self::assertModelMissing($link);
+        self::assertModelMissing($progression);
+        self::assertModelMissing($highlight);
+        self::assertModelExists($genre);
     }
 
     #[Test, DataProvider(methodName: 'provideValidation')]

@@ -11,6 +11,7 @@ use App\Models\Progression;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\User;
+use App\Models\Visit;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,12 +22,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create();
-
         Faq::factory(10)->create();
-
         Post::factory(100)->create();
-
         Genre::factory(10)->create();
+        Server::factory(10)->create();
 
         Project::factory(50)->create()->each(function (Project $project) {
             $genres = Genre::all()->random(rand(0, 3))->pluck('id')->toArray();
@@ -36,12 +35,9 @@ class DatabaseSeeder extends Seeder
             $project->relatedProjects()->attach($relatedProject);
         });
 
-        Server::factory(10)->create();
-
         Link::factory(50)->create();
-
         Progression::factory(5)->create();
-
         Highlight::factory(5)->create();
+        Visit::factory(300)->create();
     }
 }

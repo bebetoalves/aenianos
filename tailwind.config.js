@@ -23,8 +23,8 @@ module.exports = {
         require('@tailwindcss/line-clamp')
     ],
     safelist: [
-        {pattern: /bg-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange)-100/},
-        {pattern: /text-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange)-800/},
+        {pattern: /bg-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange|purple)-100/},
+        {pattern: /text-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange|purple)-800/},
         {
             pattern: /grid-(cols)-([123])/,
             variants: ['lg'],

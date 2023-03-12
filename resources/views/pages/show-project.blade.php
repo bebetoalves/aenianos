@@ -40,6 +40,20 @@
                                 </x-slot:icon>
                             </x-badge>
 
+                            <x-badge color="purple" :label="$project->category->description">
+                                <x-slot:icon>
+                                    @if ($project->category->is(\App\Enums\Category::SERIES))
+                                        <x-icons.tv class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->category->is(\App\Enums\Category::MOVIE))
+                                        <x-icons.ticket class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->category->in([\App\Enums\Category::OVA, \App\Enums\Category::ONA]))
+                                        <x-icons.disc class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->category->is(\App\Enums\Category::SPECIAL))
+                                        <x-icons.star class="mr-1 h-auto w-3"/>
+                                    @endif
+                                </x-slot:icon>
+                            </x-badge>
+
                             @foreach ($project->genres as $genre)
                                 <x-badge class="py-1" color="orange" :label="$genre->name">
                                     <x-slot:icon>

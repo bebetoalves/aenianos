@@ -46,10 +46,10 @@
                 @forelse ($results as $result)
                     <div class="group">
                         <a href="{{ route($result->route, $result->slug) }}" class="group flex items-center justify-between p-4 focus-visible:outline-none">
-                            <span class="font-medium group-hover:text-blue-600 transition group-focus-visible:text-blue-600">
+                            <span class="truncate font-medium group-hover:text-blue-600 transition group-focus-visible:text-blue-600">
                                 {{ $result->title }}
                             </span>
-                            <span class="text-sm text-gray-500">
+                            <span class="ml-4 text-sm text-gray-500">
                                 {{ $result->type }}
                             </span>
                         </a>

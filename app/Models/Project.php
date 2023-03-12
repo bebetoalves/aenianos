@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class Project extends Model
 {
-    use HasFactory, HasSlugField;
+    use HasFactory, HasSlugField, HasSEO;
 
     protected $fillable = [
         'title',
@@ -61,6 +63,16 @@ class Project extends Model
     public function visits(): MorphMany
     {
         return $this->morphMany(Visit::class, 'visitable');
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            title: $this->title,
+            description: $this->synopsis,
+            image: image_url($this->cover),
+            published_time: $this->created_at,
+        );
     }
 
     protected function defineSluggableField(): string

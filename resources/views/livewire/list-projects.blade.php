@@ -38,7 +38,7 @@
             </div>
         @empty
             <div class="col-span-full row-span-full rounded-lg border border-gray-200 bg-white p-16 text-center text-gray-500">
-                <h3 class="mt-4 text-2xl text-gray-500">Não há projetos no momento!</h3>
+                <h3 class="mt-4 text-2xl text-gray-500">Não foram encontrados projetos!</h3>
             </div>
         @endforelse
     </div>

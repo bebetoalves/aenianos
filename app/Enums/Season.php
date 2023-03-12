@@ -14,4 +14,14 @@ class Season extends Enum implements LocalizedEnum
     const SUMMER = 'summer';
 
     const FALL = 'fall';
+
+    public function color(): string
+    {
+        return match ($this->value) {
+            self::WINTER => 'cyan',
+            self::SPRING => 'emerald',
+            self::SUMMER => 'pink',
+            self::FALL => 'orange',
+        };
+    }
 }

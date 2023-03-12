@@ -13,7 +13,7 @@ class ProjectFactory extends Factory
         return [
             'title' => fake()->sentence(nbWords: 2),
             'alternative_title' => fake()->randomElement([null, fake()->sentence(nbWords: 2)]),
-            'synopsis' => fake()->realText(),
+            'synopsis' => fake()->realText(maxNbChars: 500),
             'episodes' => fake()->randomNumber(nbDigits: 2),
             'year' => fake()->year(),
             'season' => Season::getRandomValue(),

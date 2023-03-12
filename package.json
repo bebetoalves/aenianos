@@ -3,15 +3,17 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "lint": "eslint . --ext .js,.blade.php --ignore-path .gitignore",
-        "lint:debug": "eslint . --ext .js,.blade.php --ignore-path .gitignore --debug",
-        "lint:fix": "eslint . --ext .js,.blade.php --ignore-path .gitignore --fix"
+        "lint": "eslint resources --ext .js,.blade.php",
+        "lint:debug": "eslint resources --ext .js,.blade.php --debug",
+        "lint:fix": "eslint resources --ext .js,.blade.php --fix"
     },
     "devDependencies": {
+        "@alpinejs/focus": "^3.12.0",
         "@angular-eslint/template-parser": "^15.2.1",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.9",
+        "alpinejs": "^3.12.0",
         "autoprefixer": "^10.4.14",
         "axios": "^1.3.4",
         "eslint": "^8.36.0",

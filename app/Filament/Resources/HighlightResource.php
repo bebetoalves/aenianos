@@ -43,6 +43,9 @@ class HighlightResource extends Resource
                 FileUpload::make('cover')
                     ->label(__('models.highlight.cover'))
                     ->image()
+                    ->imageResizeMode('cover')
+                    ->imageResizeTargetWidth('1280')
+                    ->imageResizeTargetHeight('720')
                     ->hidden(fn (Closure $get): bool => $get('use_project_cover'))
                     ->required(fn (Closure $get): bool => ! $get('use_project_cover'))
                     ->columnSpanFull(),

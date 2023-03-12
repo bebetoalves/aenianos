@@ -43,6 +43,9 @@ class ServerResource extends Resource
                 FileUpload::make('icon')
                     ->label(__('models.server.icon'))
                     ->image()
+                    ->imageResizeMode('cover')
+                    ->imageResizeTargetWidth('32')
+                    ->imageResizeTargetHeight('32')
                     ->required()
                     ->columnSpanFull(),
             ]);

@@ -47,6 +47,10 @@ class PostResource extends Resource
                 FileUpload::make('image')
                     ->label(__('models.post.image'))
                     ->required()
+                    ->image()
+                    ->imageResizeMode('cover')
+                    ->imageResizeTargetWidth('1280')
+                    ->imageResizeTargetHeight('720')
                     ->columnSpanFull(),
 
                 Toggle::make('draft')

@@ -105,11 +105,17 @@ class ProjectResource extends Resource
                         FileUpload::make('miniature')
                             ->label(__('models.project.miniature'))
                             ->image()
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('255')
+                            ->imageResizeTargetHeight('360')
                             ->required(),
 
                         FileUpload::make('cover')
                             ->label(__('models.project.cover'))
                             ->image()
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('1280')
+                            ->imageResizeTargetHeight('720')
                             ->required(),
                     ]),
             ]);

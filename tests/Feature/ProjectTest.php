@@ -217,6 +217,18 @@ class ProjectTest extends TestCase
         self::assertModelExists($genre);
     }
 
+    #[Test]
+    public function canSearchByTitle()
+    {
+        $record = Project::factory()->count(10)->create();
+        $title = $record->first()->title;
+
+        Livewire::test(ListProjects::class)
+            ->searchTable($title)
+            ->assertCanSeeTableRecords($record->where('title', $title))
+            ->assertCanNotSeeTableRecords($record->where('title', '!=', $title));
+    }
+
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {

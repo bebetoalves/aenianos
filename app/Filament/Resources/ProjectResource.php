@@ -88,6 +88,7 @@ class ProjectResource extends Resource
                                     ->label(__('models.project.genres'))
                                     ->relationship('genres', 'name')
                                     ->multiple()
+                                    ->preload()
                                     ->maxItems(3)
                                     ->required(),
 
@@ -130,7 +131,8 @@ class ProjectResource extends Resource
             ->columns([
                 TextColumn::make('title')
                     ->label(__('models.project.title'))
-                    ->limit(30),
+                    ->limit(50)
+                    ->searchable(),
 
                 BadgeColumn::make('links_count')
                     ->label(__('models.project.links'))

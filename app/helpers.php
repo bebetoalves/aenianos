@@ -17,10 +17,3 @@ if (! function_exists('image_url')) {
         return url(sprintf('%s/%s', 'storage', $path));
     }
 }
-
-if (! function_exists('route_is')) {
-    function route_is(string $route): bool
-    {
-        return \Illuminate\Support\Facades\Route::is($route);
-    }
-}

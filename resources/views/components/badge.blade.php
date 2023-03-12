@@ -4,7 +4,7 @@
         @mouseleave="open = false"
         class="flex items-center rounded px-2.5 py-0.5 text-xs font-medium tracking-wide bg-{{ $color ?? 'gray' }}-100 text-{{ $color ?? 'gray' }}-800"
     >
-        @if(isset($icon))
+        @if (isset($icon))
             {{ $icon }}
         @endif
 

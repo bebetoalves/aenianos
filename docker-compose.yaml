@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:latest
+    container_name: aenianos_db
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_USER: ${DB_USERNAME:-user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - aenianos_db:/var/lib/mysql
+    networks:
+      - aenianos_network
+
+  adminer:
+    image: adminer
+    container_name: aenianos_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - aenianos_network
+
+volumes:
+  aenianos_db:
+
+networks:
+  aenianos_network:
+    driver: bridge

@@ -14,4 +14,14 @@ class Quality extends Enum implements LocalizedEnum
     const HD = 'hd';
 
     const SD = 'sd';
+
+    public function order(): int
+    {
+        return match ($this->value) {
+            self::UHD => 0,
+            self::FHD => 1,
+            self::HD => 2,
+            self::SD => 3,
+        };
+    }
 }

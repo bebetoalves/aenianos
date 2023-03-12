@@ -61,7 +61,7 @@ class ProjectResource extends Resource
 
                         MarkdownEditor::make('synopsis')
                             ->label(__('models.project.synopsis'))
-                            ->maxLength(560)
+                            ->maxLength(500)
                             ->required(),
 
                         Grid::make(3)

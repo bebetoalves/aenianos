@@ -135,6 +135,24 @@ class LinkTest extends TestCase
         self::assertModelMissing($record);
     }
 
+    #[Test]
+    public function throwForbiddenIfHasNoReferer()
+    {
+        $link = Link::factory()->create();
+
+        $this->get(route('links.show', $link->getKey()))
+            ->assertForbidden();
+    }
+
+    #[Test]
+    public function canRedirectIfHasReferer()
+    {
+        $link = Link::factory()->create();
+
+        $this->get(route('links.show', $link->getKey()), ['HTTP_REFERER' => route('home')])
+            ->assertRedirect();
+    }
+
     #[Test, DataProvider(methodName: 'provideValidation')]
     public function canValidateCreate(array $input, array $errors): void
     {

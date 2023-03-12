@@ -63,7 +63,7 @@ class ProjectTest extends TestCase
                     'title' => Str::random(31),
                     'alternative_title' => Str::random(31),
                     'episodes' => Str::random(11),
-                    'synopsis' => Str::random(561),
+                    'synopsis' => Str::random(501),
                     'year' => Str::random(5),
                     'genres' => fn () => Genre::factory(4)->create()->pluck('id')->toArray(),
                     'related_project' => fn () => Project::factory(6)->create()->pluck('id')->toArray(),

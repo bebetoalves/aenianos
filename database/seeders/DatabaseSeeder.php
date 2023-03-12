@@ -2,16 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Faq;
+use App\Enums\Role;
 use App\Models\Genre;
-use App\Models\Highlight;
-use App\Models\Link;
-use App\Models\Post;
-use App\Models\Progression;
-use App\Models\Project;
-use App\Models\Server;
 use App\Models\User;
-use App\Models\Visit;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,23 +14,57 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-        Faq::factory(10)->create();
-        Post::factory(100)->create();
-        Genre::factory(10)->create();
-        Server::factory(10)->create();
+        User::factory()->create([
+            'email' => 'admin@example.com',
+            'role' => Role::ADMIN,
+        ]);
 
-        Project::factory(50)->create()->each(function (Project $project) {
-            $genres = Genre::all()->random(rand(0, 3))->pluck('id')->toArray();
-            $relatedProject = Project::all()->random(rand(0, 5))->pluck('id')->toArray();
+        Genre::factory()->createMany(array_map(fn (string $name) => ['name' => $name], $this->genres()));
+    }
 
-            $project->genres()->attach($genres);
-            $project->relatedProjects()->attach($relatedProject);
-        });
-
-        Link::factory(50)->create();
-        Progression::factory(5)->create();
-        Highlight::factory(5)->create();
-        Visit::factory(300)->create();
+    private function genres(): array
+    {
+        return [
+            'Ação',
+            'Artes Marciais',
+            'Aventura',
+            'Carros',
+            'Comédia',
+            'Crianças',
+            'Demência',
+            'Demonios',
+            'Drama',
+            'Ecchi',
+            'Escola',
+            'Espaço',
+            'Esportes',
+            'Fantasia',
+            'Ficção Científica',
+            'Harém',
+            'Histórico',
+            'Horror',
+            'Jogos',
+            'Josei',
+            'Magia',
+            'Mecha',
+            'Militar',
+            'Mistério',
+            'Musical',
+            'Paródia',
+            'Policial',
+            'Psicológico',
+            'Romance',
+            'Samurai',
+            'Seinen',
+            'Shoujo',
+            'Shoujo Ai',
+            'Shounen',
+            'Shounen Ai',
+            'Slice of Life',
+            'Sobrenatural',
+            'Super Poderes',
+            'Suspense',
+            'Vampiro',
+        ];
     }
 }

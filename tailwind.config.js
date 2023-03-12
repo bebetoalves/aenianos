@@ -1,5 +1,6 @@
 const colors = require('tailwindcss/colors')
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
         './resources/**/*.blade.php',
@@ -13,11 +14,20 @@ module.exports = {
                 primary: colors.blue,
                 success: colors.green,
                 warning: colors.yellow,
-            },
+            }
         },
     },
     plugins: [
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
+        require('@tailwindcss/line-clamp')
+    ],
+    safelist: [
+        {pattern: /bg-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange)-100/},
+        {pattern: /text-(lime|green|violet|pink|amber|red|cyan|emerald|slate|orange)-800/},
+        {
+            pattern: /grid-(cols)-([123])/,
+            variants: ['lg'],
+        },
     ],
 }

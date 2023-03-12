@@ -33,4 +33,10 @@ class Link extends Model
     {
         return $this->belongsTo(Server::class);
     }
+
+    public function markAsBroken(): void
+    {
+        $this->active = false;
+        $this->save();
+    }
 }

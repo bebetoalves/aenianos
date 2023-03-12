@@ -45,13 +45,13 @@ class ProjectResource extends Resource
                             ->schema([
                                 TextInput::make('title')
                                     ->label(__('models.project.title'))
-                                    ->maxLength(30)
+                                    ->maxLength(100)
                                     ->unique(ignoreRecord: true)
                                     ->required(),
 
                                 TextInput::make('alternative_title')
                                     ->label(__('models.project.alternative_title'))
-                                    ->maxLength(30),
+                                    ->maxLength(100),
 
                                 TextInput::make('episodes')
                                     ->label(__('models.project.episodes'))

@@ -60,8 +60,8 @@ class ProjectTest extends TestCase
             ],
             'max length' => [
                 'input' => [
-                    'title' => Str::random(31),
-                    'alternative_title' => Str::random(31),
+                    'title' => Str::random(101),
+                    'alternative_title' => Str::random(101),
                     'episodes' => Str::random(11),
                     'synopsis' => Str::random(501),
                     'year' => Str::random(5),

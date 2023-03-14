@@ -144,7 +144,7 @@
     <x-card class="mt-4">
         <x-slot:title>Projetos Relacionados</x-slot:title>
         <x-slot:icon>
-            <x-heroicon-o-video-camera class="h-5 w-5"/>
+            <x-heroicon-o-film class="h-5 w-5"/>
         </x-slot:icon>
 
         <section class="grid grid-cols-1 gap-4 md:grid-cols-5">

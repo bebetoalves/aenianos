@@ -1,5 +1,6 @@
 <x-layout>
     <x-slot:title>{{ $project->title }}</x-slot:title>
+    <x-slot:seo>{!! seo()->for($project) !!}</x-slot:seo>
 
     <x-slot:header>
         <div class="relative mt-12 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat p-4 shadow"

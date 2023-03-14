@@ -7,7 +7,7 @@
     <title>{{ sprintf('%s - %s', config('app.name', 'Laravel'), $title) }}</title>
 
     <!-- SEO -->
-    {!! seo() !!}
+    @if (isset($seo)) {{ $seo }} @else {!! seo() !!} @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

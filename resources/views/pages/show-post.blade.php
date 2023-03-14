@@ -1,5 +1,6 @@
 <x-layout>
     <x-slot:title>{{ $post->title }}</x-slot:title>
+    <x-slot:seo>{!! seo()->for($post) !!}</x-slot:seo>
 
     <div class="flex flex-col rounded-lg border border-gray-200 bg-white p-4">
         <div>

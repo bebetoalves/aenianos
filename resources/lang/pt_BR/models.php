@@ -37,6 +37,7 @@ return [
         'quality' => 'Qualidade',
         'project' => 'Projeto',
         'server' => 'Servidor',
+        'active' => 'Ativo',
     ],
     'project' => [
         'title' => 'Título',

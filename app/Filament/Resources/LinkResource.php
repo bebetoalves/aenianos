@@ -8,6 +8,7 @@ use App\Models\Link;
 use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -57,6 +58,10 @@ class LinkResource extends Resource
                     ->label(__('models.link.server'))
                     ->relationship('server', 'name')
                     ->required(),
+
+                Toggle::make('active')
+                    ->label(__('models.link.active'))
+                    ->default(true),
             ]);
     }
 

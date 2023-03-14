@@ -86,6 +86,7 @@ class LinkTest extends TestCase
                 'project_id' => $data->project_id,
                 'quality' => $data->quality,
                 'server_id' => $data->server_id,
+                'active' => $data->active,
             ])
             ->assertHasNoPageActionErrors();
 
@@ -95,6 +96,7 @@ class LinkTest extends TestCase
             'project_id' => $data->project_id,
             'quality' => $data->quality,
             'server_id' => $data->server_id,
+            'active' => $data->active,
         ]);
     }
 
@@ -111,6 +113,7 @@ class LinkTest extends TestCase
                 'project_id' => $data->project_id,
                 'quality' => $data->quality,
                 'server_id' => $data->server_id,
+                'active' => $data->active,
             ])
             ->assertHasNoTableActionErrors();
 
@@ -121,6 +124,7 @@ class LinkTest extends TestCase
         self::assertEquals($data->project_id, $record->project_id);
         self::assertEquals($data->quality, $record->quality);
         self::assertEquals($data->server_id, $record->server_id);
+        self::assertEquals($data->active, $record->active);
     }
 
     #[Test]

@@ -1,5 +1,5 @@
 <footer {{ $attributes }}>
-    <div class="border-t border-gray-200 bg-white py-12 px-4">
+    <div class="border-t border-gray-200 bg-white px-4 py-12">
         <div class="mx-auto flex max-w-7xl flex-wrap items-start gap-12 md:justify-between xl:gap-0">
             <div class="flex w-full flex-col xl:w-1/3">
                 <x-logo />
@@ -70,7 +70,7 @@
         </div>
     </div>
 
-    <div class="bg-gray-100 py-6 px-4">
+    <div class="bg-gray-100 px-4 py-6">
         <div class="mx-auto flex max-w-7xl flex-col items-center md:flex-row md:justify-between">
             <span class="text-sm font-light tracking-wide text-gray-400">Desenvolvido com ☕ por Meteor</span>
             <span class="text-sm font-light tracking-wide text-gray-400">Aenianos Fansubber © {{ date('Y') }}</span>

@@ -52,6 +52,7 @@ return [
         'links' => 'Links',
         'genres' => 'Gêneros',
         'related_project' => 'Projetos relacionados',
+        'status' => 'Situação',
     ],
     'highlight' => [
         'project' => 'Projeto',

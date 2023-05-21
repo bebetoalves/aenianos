@@ -21,6 +21,20 @@
                         </h1>
 
                         <div class="flex flex-wrap items-center justify-center gap-2 text-gray-200 lg:justify-start">
+                            <x-badge :color="$project->status->color()" :label="$project->status->description">
+                                <x-slot:icon>
+                                    @if ($project->status->is(\App\Enums\Status::ONGOING))
+                                        <x-icons.rotate class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->status->is(\App\Enums\Status::COMPLETED))
+                                        <x-icons.check class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->status->is(\App\Enums\Status::PAUSED))
+                                        <x-icons.clock-pause class="mr-1 h-auto w-3"/>
+                                    @elseif (@$project->status->is(\App\Enums\Status::CANCELED))
+                                        <x-icons.trash-x class="mr-1 h-auto w-3"/>
+                                    @endif
+                                </x-slot:icon>
+                            </x-badge>
+
                             <x-badge :color="$project->season->color()" :label="$project->season->description">
                                 <x-slot:icon>
                                     @if ($project->season->is(\App\Enums\Season::WINTER))

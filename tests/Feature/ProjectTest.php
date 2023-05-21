@@ -135,6 +135,7 @@ class ProjectTest extends TestCase
                 'cover' => $this->uploadedFile,
                 'genres' => $genres,
                 'related_project' => $relatedProjects,
+                'status' => $data->status,
             ])
             ->call('create')
             ->assertHasNoFormErrors();

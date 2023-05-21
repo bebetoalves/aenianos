@@ -1,22 +1,22 @@
 <div x-data="{ open: false }" class="relative">
-    <button
+    <span
         @mouseover="open = true"
         @mouseleave="open = false"
-        class="flex items-center rounded px-2.5 py-0.5 text-xs font-medium tracking-wide bg-{{ $color ?? 'gray' }}-100 text-{{ $color ?? 'gray' }}-800"
+        class="flex items-center rounded-md bg-{{ $color ?? 'gray' }}-50 px-2 py-1 text-xs font-medium text-{{ $color ?? 'gray' }}-600 ring-1 ring-inset ring-{{ $color ?? 'gray' }}-500/10"
     >
         @if (isset($icon))
             {{ $icon }}
         @endif
 
         <span>{{ $label }}</span>
-    </button>
+    </span>
 
     @if (isset($tooltip))
         <span
             x-cloak
             x-transition
             x-show="open"
-            class="bg-{{ $color }}-100 text-{{ $color }}-800 absolute bottom-6 z-10 rounded px-2.5 py-0.5 text-center text-xs font-medium tracking-wide"
+            class="absolute bottom-6 mb-0.5 z-10 items-center rounded-md bg-{{ $color ?? 'gray' }}-50 px-2 py-1 text-xs font-medium text-{{ $color ?? 'gray' }}-600 ring-1 ring-inset ring-{{ $color ?? 'gray' }}-500/10"
         >
             {{ $tooltip }}
         </span>

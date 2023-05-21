@@ -5,11 +5,11 @@
 
     <article>
         <a href="{{ route('posts.show', $slug) }}"
-           class="text-xl font-bold transition line-clamp-1 hover:text-blue-600">
+           class="line-clamp-1 text-xl font-bold transition hover:text-blue-600">
             {{ $title }}
         </a>
 
-        <p class="prose mt-2 text-gray-500 line-clamp-3">{{ $content }}</p>
+        <p class="prose mt-2 line-clamp-3 text-gray-500">{{ $content }}</p>
     </article>
 
     <footer class="flex items-center justify-between text-sm text-gray-500">

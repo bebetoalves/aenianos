@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\Category;
 use App\Enums\Season;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProjectFactory extends Factory
@@ -20,6 +21,7 @@ class ProjectFactory extends Factory
             'category' => Category::getRandomValue(),
             'miniature' => placekitten(width: 640, height: 905),
             'cover' => placekitten(width: 1280, height: 720),
+            'status' => Status::getRandomValue(),
         ];
     }
 }

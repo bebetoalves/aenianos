@@ -5,6 +5,7 @@ use App\Enums\Quality;
 use App\Enums\Role;
 use App\Enums\Season;
 use App\Enums\State;
+use App\Enums\Status;
 
 return [
     Category::class => [
@@ -38,5 +39,11 @@ return [
     Role::class => [
         Role::ADMIN => 'Administrador',
         Role::MODERATOR => 'Moderador',
+    ],
+    Status::class => [
+        Status::ONGOING => 'Andamento',
+        Status::COMPLETED => 'Concluído',
+        Status::PAUSED => 'Pausado',
+        Status::CANCELED => 'Cancelado',
     ],
 ];

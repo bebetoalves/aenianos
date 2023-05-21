@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\Category;
 use App\Enums\Season;
+use App\Enums\Status;
 use App\Filament\Resources\ProjectResource\Pages\CreateProject;
 use App\Filament\Resources\ProjectResource\Pages\EditProject;
 use App\Filament\Resources\ProjectResource\Pages\ListProjects;
@@ -64,7 +65,7 @@ class ProjectResource extends Resource
                             ->maxLength(500)
                             ->required(),
 
-                        Grid::make(3)
+                        Grid::make(4)
                             ->schema([
                                 TextInput::make('year')
                                     ->label(__('models.project.year'))
@@ -79,6 +80,11 @@ class ProjectResource extends Resource
                                 Select::make('category')
                                     ->label(__('models.project.category'))
                                     ->options(Category::asSelectArray())
+                                    ->required(),
+
+                                Select::make('status')
+                                    ->label(__('models.project.status'))
+                                    ->options(Status::asSelectArray())
                                     ->required(),
                             ]),
 

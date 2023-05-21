@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Category;
 use App\Enums\Season;
+use App\Enums\Status;
 use App\Models\Concerns\HasSlugField;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,11 +29,13 @@ class Project extends Model
         'category',
         'miniature',
         'cover',
+        'status',
     ];
 
     protected $casts = [
         'season' => Season::class,
         'category' => Category::class,
+        'status' => Status::class,
     ];
 
     public function genres(): BelongsToMany
